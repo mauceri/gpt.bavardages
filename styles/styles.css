@@ -1,0 +1,32 @@
+.page-container {
+    display: flex;
+  }
+  .marge {
+    display: flex;
+    flex-direction: column;
+    width: 25%;
+    height: 100%;
+  }
+  
+  .main-content {
+    width: 75%;
+    height: 100%;
+  }
+  
+  .main-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .file-list, .menu {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .dialogue {
+    width: 100%;
+    height: 100%;
+  }
