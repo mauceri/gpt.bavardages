@@ -1,5 +1,5 @@
 
-const Layout  = ({ children }: {children: React.ReactNode;home?: boolean;}) =>
+function Layout ({ children }) 
 {
   return (
     <div className="page-container">
