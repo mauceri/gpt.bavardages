@@ -11,7 +11,7 @@ function Layout ({ children } : Props)
     <div className="page-container">
       <div className="marge">
       <div className="file-list">
-        <h2>Fichiers de contexte</h2>
+        <h2>Contextes</h2>
         <ul>
           <li>Fichier 1</li>
           <li>Fichier 2</li>
@@ -26,11 +26,11 @@ function Layout ({ children } : Props)
           <li>Option 3</li>
         </ul>
       </div>
-      </div>
-      <div className="main-content">
-        {children}
-      </div>
     </div>
+    <div className="main-content">
+        {children}
+    </div>
+  </div>
   );
 };
 

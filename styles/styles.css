@@ -1,32 +1,90 @@
 .page-container {
     display: flex;
+    /*size: auto;*/
+    height: 100vh;
+    width: 100vh;
   }
   .marge {
     display: flex;
     flex-direction: column;
     width: 25%;
     height: 100%;
+    border-color:#3C3C3C;
+    border-style: solid;
   }
   
   .main-content {
     width: 75%;
     height: 100%;
+    border-color:#3C3C3C;
+    border-style: solid;
+    display: flex;
+    align-items: center;
+    justify-content: left;
   }
   
-  .main-content {
+  .file-list{
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
   }
-  
-  .file-list, .menu {
+  .menu{
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
   }
   
-  .dialogue {
-    width: 100%;
+  .terminal {
     height: 100%;
-  }
+    width: 100%;
+   
+    overflow-y: auto;
+    background-color: #3C3C3C;
+    color: #C4C4C4;
+    /*padding: 35px 45px;*/
+    font-size: 14px;
+    line-height: 1.42;
+    font-family: 'IBM Plex Mono', Consolas, Menlo, Monaco, 'Courier New', Courier,
+    monospace;
+    text-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+}
+
+.terminal__line {
+    line-height: 2;
+    white-space: pre-wrap;
+}
+
+.terminal__prompt {
+    display: flex;
+    align-items: center;
+}
+
+.terminal__prompt__label {
+    flex: 0 0 auto;
+    color: #F9EF00;
+}
+
+.terminal__prompt__input {
+    flex: 1;
+    margin-left: 1rem;
+    display: flex;
+    align-items: center;
+    color: white;
+}
+
+.terminal__prompt__input input {
+    flex: 1;
+    width: 100%;
+    background-color: transparent;
+    color: white;
+    border: 0;
+    outline: none;
+    font-size: 14px;
+    line-height: 1.42;
+    font-family: 'IBM Plex Mono', Consolas, Menlo, Monaco, 'Courier New', Courier,
+    monospace;
+} 
+  
+
