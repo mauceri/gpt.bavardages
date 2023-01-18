@@ -5,7 +5,7 @@ const Terminal = () => {
         <div className="terminal__prompt">
           <div className="terminal__prompt__label">Vous:</div>
           <div className="terminal__prompt__input">
-            <input type="text" />
+            <input title="entrez" type="text" />
           </div>
         </div>
       </div>
