@@ -7,7 +7,6 @@ export default function BurgerButton() {
         <button
             className="hamburger"
             onClick={() => {
-                console.log("Click!");
                 setIsNavExpanded(!isNavExpanded);
             }}
         >
