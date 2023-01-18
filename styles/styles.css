@@ -1,4 +1,4 @@
-.page-container {
+.page-principale{
     display: flex;
     /*size: auto;*/
     height: 100vh;
@@ -13,7 +13,7 @@
     border-style: solid;
   }
   
-  .main-content {
+  .contenu-principal {
     width: 75%;
     height: 100%;
     border-color:#3C3C3C;
@@ -23,7 +23,7 @@
     justify-content: left;
   }
   
-  .file-list{
+  .contextes{
     display: flex;
     flex-direction: column;
     align-items: center;

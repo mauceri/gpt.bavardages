@@ -8,9 +8,9 @@ interface Props {
 function Layout ({ children } : Props) 
 {
   return (
-    <div className="page-container">
+    <div className="page-principale">
       <div className="marge">
-      <div className="file-list">
+      <div className="contextes">
         <h2>Contextes</h2>
         <ul>
           <li>Fichier 1</li>
@@ -27,7 +27,7 @@ function Layout ({ children } : Props)
         </ul>
       </div>
     </div>
-    <div className="main-content">
+    <div className="contenu-principal">
         {children}
     </div>
   </div>
