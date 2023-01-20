@@ -14,18 +14,25 @@
     border-color:#3C3C3C;
     border-style: solid;
   }*/
-  
+  :root{
+    --marge-width: 25%;
+    --contenu-principal-width: 73%;
+    --contextes-and-menu-display: flex;
+    --marge-background-color: white,
+    }
   .marge  {
     display: flex;
     flex-direction: column;
-    width: 25%;
+    width: var(--marge-width);
     height: 100%;
     border-color:#3C3C3C;
+    background-color: var(--marge-background-color);
     border-style: solid;
   }
   
   .contenu-principal {
-    width: 75%;
+    width: var(--contenu-principal-width);
+    /*width: 90%;*/
     height: 100%;
     border-color:#3C3C3C;
     border-style: solid;
@@ -35,13 +42,13 @@
   }
   
   .contextes{
-    display: flex;
+    display: var(--contextes-and-menu-display);
     flex-direction: column;
     align-items: center;
     justify-content: center;
   }
   .menu{
-    display: flex;
+    display: var(--contextes-and-menu-display);
     flex-direction: column;
     align-items: center;
     justify-content: center;

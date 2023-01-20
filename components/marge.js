@@ -3,14 +3,34 @@ import { useState } from "react";
 
 export default function Marge() {
   const [isNavExpanded, setIsNavExpanded] = useState(false)
-
-  if (isNavExpanded) {
+  
+  //if (isNavExpanded) {
     return (
       <div className="marge">
         <button
           className="hamburger"
           onClick={() => {
-            console.log("Click!");
+            let oldWidth = Math.floor(
+                            getComputedStyle(document.documentElement).
+                            getPropertyValue('--marge-width').slice(0, -1)
+                            );
+            let width = oldWidth
+            if(width == 25) {
+              width = 3;
+              document.documentElement.style.setProperty('--contextes-and-menu-display', 'none');
+              document.documentElement.style.setProperty('--marge-background-color', '#3C3C3C');
+              document.documentElement.style.setProperty('--marge-width', '3%'); 
+              document.documentElement.style.setProperty('--contenu-principal-width', '95%');             
+            } else {
+              document.documentElement.style.setProperty('--contextes-and-menu-display', 'flex');
+              document.documentElement.style.setProperty('--marge-background-color', 'white');
+              document.documentElement.style.setProperty('--marge-width', '25%');
+              document.documentElement.style.setProperty('--contenu-principal-width', '73%');             
+              width = 25
+            }
+
+            console.log("Marge width changed from %s to %s",`${oldWidth}%`,`${width}%`);
+            //document.documentElement.style.setProperty('--marge-width', `${width}%`);
             setIsNavExpanded(!isNavExpanded);
           }}
         >
@@ -47,7 +67,7 @@ export default function Marge() {
 
       </div>
     )
-  } else {
+  /*} else {
     return (
       <button
         className="hamburger"
@@ -56,7 +76,7 @@ export default function Marge() {
           setIsNavExpanded(!isNavExpanded);
         }}
       >
-        {/* icon from heroicons.com */}
+        
         <svg
           xmlns="http://www.w3.org/2000/svg"
           className="h-5 w-5"
@@ -70,5 +90,5 @@ export default function Marge() {
           />
         </svg>
       </button>)
-  }
+  }*/
 }
