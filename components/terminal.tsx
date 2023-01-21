@@ -9,7 +9,7 @@ const Terminal = () => {
       <div className="terminal__line">
         {
           session?.user &&
-          <p>Je suis un robot d'OpenAI, je suis là pour bavarder avec vous...&#128520;</p>
+          <p>Je suis un robot d'OpenAI, je suis là pour bavarder avec vous...</p>
         }
       </div>
       <div className="terminal__prompt">
