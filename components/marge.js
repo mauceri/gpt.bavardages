@@ -19,7 +19,7 @@ export default function Marge() {
               width = 3;
               document.documentElement.style.setProperty('--contextes-and-menu-display', 'none');
               document.documentElement.style.setProperty('--marge-background-color', '#3C3C3C');
-              document.documentElement.style.setProperty('--marge-width', '3%'); 
+              document.documentElement.style.setProperty('--marge-width', '42px'); 
               document.documentElement.style.setProperty('--contenu-principal-width', '95%');             
             } else {
               document.documentElement.style.setProperty('--contextes-and-menu-display', 'flex');
