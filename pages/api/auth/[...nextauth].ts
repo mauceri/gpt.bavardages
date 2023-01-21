@@ -29,10 +29,10 @@ export const authOptions: NextAuthOptions = {
       },
     }),
     */
-    FacebookProvider({
+    /*FacebookProvider({
       clientId: process.env.FACEBOOK_ID as string,
       clientSecret: process.env.FACEBOOK_SECRET as string,
-    }),
+    }),*/
     GithubProvider({
       clientId: process.env.GITHUB_ID as string,
       clientSecret: process.env.GITHUB_SECRET as string,
