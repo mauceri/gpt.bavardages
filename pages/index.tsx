@@ -4,7 +4,7 @@ import { useSession, getSession } from "next-auth/react"
 
 import React, {useEffect, useMemo} from 'react';
 import Terminal from 'components/terminal';
-import {useTerminal} from "components/hooks";
+import useTerminal from 'components/hooks';
 
 export default function Home() {
   const {
