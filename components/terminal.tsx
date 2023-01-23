@@ -1,26 +1,79 @@
-import { signIn, signOut, useSession } from "next-auth/react"
+import { ForwardedRef, forwardRef, useCallback, useEffect, useRef, useState } from "react";
+import { TerminalProps } from "./types";
 
-const Terminal = () => {
-  const { data: session, status } = useSession()
-  const loading = status === "loading"
 
-  return (
-    <div className="terminal">
-      <div className="terminal__line">
-        {
-          session?.user &&
-          <p>Je suis un robot d'OpenAI, je suis là pour bavarder avec vous...</p>
+const Terminal = forwardRef(
+  (props: TerminalProps, ref: ForwardedRef<HTMLDivElement>) => {
+    const {
+      history = [],
+      promptLabel = '>',
+
+      commands = {},
+    } = props;
+
+    const inputRef = useRef<HTMLInputElement>();
+    const [input, setInputValue] = useState<string>('');
+
+    /**
+     * Focus on the input whenever we render the terminal or click in the terminal
+     */
+    useEffect(() => {
+      inputRef.current?.focus();
+    });
+
+    const focusInput = useCallback(() => {
+      inputRef.current?.focus();
+    }, []);
+
+
+    /**
+     * When user types something, we update the input value
+     */
+    const handleInputChange = useCallback(
+      (e: React.ChangeEvent<HTMLInputElement>) => {
+        setInputValue(e.target.value);
+      },
+      []
+    );
+
+    /**
+     * When user presses enter, we execute the command
+     */
+    const handleInputKeyDown = useCallback(
+      (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter') {
+          const commandToExecute = commands?.[input.toLowerCase()];
+          if (commandToExecute) {
+            commandToExecute?.();
+          }
+          setInputValue('');
         }
-      </div>
-      <div className="terminal__prompt">
-        <div className="terminal__prompt__label">
-          {(!session?.user ? <><p> Connexion nécessaire.</p><p>Menu de connexion invisible ? Hamburger en haut à gauche...</p></> : <p>C'est à vous</p>)}</div>
-        <div className="terminal__prompt__input">
-          <input title="entrez" type="text" />
+      },
+      [commands, input]
+    );
+
+    return (
+      <div className="terminal" ref={ref} onClick={focusInput}>
+        {history.map((line, index) => (
+          <div className="terminal__line" key={`terminal-line-${index}-${line}`}>
+            {line}
+          </div>
+        ))}
+        <div className="terminal__prompt">
+          <div className="terminal__prompt__label">{promptLabel}</div>
+          <div className="terminal__prompt__input">
+            <input
+              type="text"
+              value={input}
+              onKeyDown={handleInputKeyDown}
+              onChange={handleInputChange}
+              // @ts-ignore
+              ref={inputRef}
+            />
+          </div>
         </div>
       </div>
-    </div>
-  );
-};
+    );
+  });
 
 export default Terminal;
