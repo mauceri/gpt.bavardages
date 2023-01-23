@@ -46,6 +46,17 @@ export default function Home() {
           </div>
         </>);
     },
+    'default':async (v) => {
+      alert('Hello!');
+      await pushToHistory(<>
+          <div>
+            <strong>stutter:</strong>
+            <span style={{color: 'orange', marginLeft: 10}}>
+              <strong>${v}</strong>
+            </span>
+          </div>
+        </>);
+    },
   }), [pushToHistory]);
 
 
