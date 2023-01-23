@@ -46,7 +46,7 @@ export default function Home() {
           </div>
         </>);
     }, 
-    'default':async (v as string) => {
+    'default': async (v:string) => {
       await pushToHistory(<>
           <div>
             <strong>stutter:</strong>
