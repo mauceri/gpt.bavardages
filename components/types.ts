@@ -9,7 +9,7 @@ export type TerminalPushToHistoryWithDelayProps = {
 
 
 export type TerminalCommands = {
-  [command: string]: (v?) => void;
+  [command: string]: (v:string|void) => void;
 };
 
 export type TerminalProps = {
