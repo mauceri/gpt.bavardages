@@ -19,10 +19,10 @@ export default function Home() {
     resetTerminal();
 
     pushToHistory(<>
-        <div><strong>Welcome!</strong> to the terminal.</div>
-        <div style={{fontSize: 20}}>It contains <span style={{color: 'yellow'}}><strong>HTML</strong></span>. Awesome, right?</div>
+        <div><strong>Bienvenue</strong>  au coin des bavards !</div>
+        <div style={{fontSize: 20}}>Il vous sera bientôt possible de <span style={{color: 'yellow'}}><strong>bavarder</strong></span> avec un robot d'OpenAI</div>
         <br/>
-        <div>You can write: start or alert , to execute some commands.</div>
+        <div>Vous pouvez taper ce que vous voudrez, je le répèterai</div>
       </>
     );
   }, []);
@@ -46,10 +46,20 @@ export default function Home() {
           </div>
         </>);
     }, 
-    'default': async (v:unknown) => {
+    'not logged in': async (v:unknown) => {
       await pushToHistory(<>
           <div>
             <strong>stutter:</strong>
+            <span style={{color: 'orange', marginLeft: 10}}>
+              <strong>Vous n'êtes pas connecté, voyons!</strong> Connectez-vous en utilisant le menu de la marge de gauche. Si la marge est cachée, faites-la apparaître en cliquant sur le hamburger en haut à gauche... 
+            </span>
+          </div>
+        </>);
+    },
+      'default': async (v:unknown) => {
+      await pushToHistory(<>
+          <div>
+            <strong>Vous avez tapé:</strong>
             <span style={{color: 'orange', marginLeft: 10}}>
               <strong>{v as string}</strong>
             </span>
@@ -66,7 +76,7 @@ export default function Home() {
       <Terminal
         history={history}
         ref={setTerminalRef}
-        promptLabel={<>Write something awesome:</>}
+        promptLabel={<>Allez, écrivez quelque chose :)</>}
         commands={commands}
       />
     </Layout>

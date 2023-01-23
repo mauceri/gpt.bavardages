@@ -1,9 +1,12 @@
 import { ForwardedRef, forwardRef, useCallback, useEffect, useRef, useState } from "react";
 import { TerminalProps } from "./types";
+import { signIn, signOut, useSession } from "next-auth/react"
+
 
 
 const Terminal = forwardRef(
   (props: TerminalProps, ref: ForwardedRef<HTMLDivElement>) => {
+    const { data: session, status } = useSession();
     const {
       history = [],
       promptLabel = '>',
@@ -42,12 +45,18 @@ const Terminal = forwardRef(
     const handleInputKeyDown = useCallback(
       (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter') {
-          const commandToExecute = commands?.[input.toLowerCase()];
-          if (commandToExecute) {
-            commandToExecute?.(null);
+          let commandToExecute = null;
+          if (!session) {
+            const login = commands?.['not logged in'];
+            login?.(input);
           } else {
-            const repeat = commands?.['default'];
+            commandToExecute = commands?.[input.toLowerCase()];
+            if (commandToExecute) {
+              commandToExecute?.(null);
+            } else {
+              const repeat = commands?.['default'];
               repeat?.(input);
+            }
           }
           setInputValue('');
         }
