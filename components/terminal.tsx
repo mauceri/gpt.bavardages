@@ -45,6 +45,14 @@ const Terminal = forwardRef(
           const commandToExecute = commands?.[input.toLowerCase()];
           if (commandToExecute) {
             commandToExecute?.();
+          } else {
+            async () => {
+            await pushToHistory(<>
+            <div>
+               <strong>Starting</strong> the server... <span style={{color: 'green'}}>Done</span>
+            </div>
+            </>);
+            }
           }
           setInputValue('');
         }
