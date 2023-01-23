@@ -48,7 +48,6 @@ const Terminal = forwardRef(
           } else {
             const repeat = commands?.['default'];
               repeat?.(input);
-            }
           }
           setInputValue('');
         }
