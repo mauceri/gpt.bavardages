@@ -76,4 +76,5 @@ const Terminal = forwardRef(
     );
   });
 
+Terminal.displayName = 'Terminal';
 export default Terminal;
