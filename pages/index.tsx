@@ -28,14 +28,14 @@ export default function Home() {
   }, []);
 
   const commands = useMemo(() => ({
-    'start': async () => {
+    'start': async (v:unknown) => {
       await pushToHistory(<>
           <div>
             <strong>Starting</strong> the server... <span style={{color: 'green'}}>Done</span>
           </div>
         </>);
     },
-    'alert': async () => {
+    'alert': async (v:unknown) => {
       alert('Hello!');
       await pushToHistory(<>
           <div>
@@ -46,12 +46,12 @@ export default function Home() {
           </div>
         </>);
     }, 
-    'default': async (v:string) => {
+    'default': async (v:unknown) => {
       await pushToHistory(<>
           <div>
             <strong>stutter:</strong>
             <span style={{color: 'orange', marginLeft: 10}}>
-              <strong>${v}</strong>
+              <strong>{v as string}</strong>
             </span>
           </div>
         </>);

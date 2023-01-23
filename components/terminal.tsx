@@ -44,7 +44,7 @@ const Terminal = forwardRef(
         if (e.key === 'Enter') {
           const commandToExecute = commands?.[input.toLowerCase()];
           if (commandToExecute) {
-            commandToExecute?.();
+            commandToExecute?.(null);
           } else {
             const repeat = commands?.['default'];
               repeat?.(input);
