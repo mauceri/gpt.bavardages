@@ -37,11 +37,11 @@ const Terminal = forwardRef(
           message,
         })
         .then((res) => {
+          alert(res.data.message);
           setMessages((messages) => [
             ...messages,
             { from: "ai", message: res.data.message },
           ]);
-          alert(messages);
         })
         .catch((err) => {
           console.log(err);
