@@ -41,12 +41,12 @@ const Terminal = forwardRef(
             ...messages,
             { from: "ai", message: res.data.message },
           ]);
+          alert(messages);
         })
         .catch((err) => {
           console.log(err);
         })
         .finally(() => {
-          alert(message);
           setIsLoading(false);
         });
     };
