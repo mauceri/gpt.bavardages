@@ -1,5 +1,5 @@
 import {useCallback, useEffect, useState} from 'react';
-import {TerminalHistory, TerminalHistoryItem, TerminalPushToHistoryWithDelayProps} from "./types";
+import {TerminalHistory, TerminalHistoryItem, TerminalPushToHistoryWithDelayProps} from "../components/types";
 
 
 export const useTerminal = () => {
@@ -39,26 +39,7 @@ export const useTerminal = () => {
     setHistory((old) => [...old, item]);
   }, []);
 
-  /**
-   * Write text to terminal
-   * @param content The text to be printed in the terminal
-   * @param delay The delay in ms before the text is printed
-   * @param executeBefore The function to be executed before the text is printed
-   * @param executeAfter The function to be executed after the text is printed
-   */
-  const pushToHistoryWithDelay = useCallback(
-    ({
-       delay = 0,
-       content,
-     }: TerminalPushToHistoryWithDelayProps) =>
-      new Promise((resolve) => {
-        setTimeout(() => {
-          pushToHistory(content);
-          return resolve(content);
-        }, delay);
-      }),
-    [pushToHistory]
-  );
+  
 
   /**
    * Reset the terminal window
@@ -70,8 +51,6 @@ export const useTerminal = () => {
   return {
     history,
     pushToHistory,
-    pushToHistoryWithDelay,
-
     terminalRef,
     setTerminalRef,
     resetTerminal,
