@@ -71,7 +71,7 @@ const Terminal = forwardRef(
     /**
      * When user presses enter, we execute the command
      */
-    const handleInputKeyDown = useCallback(
+    const handleInputKeyDown =
       (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
         if (e.key === 'Enter') {
           let commandToExecute = null;
@@ -93,20 +93,18 @@ const Terminal = forwardRef(
           //setInputValue('');
           (document.getElementById("input") as HTMLTextAreaElement).value = "" ;
         }
-      },
-      [input]
-    );
+      };
 
     return (
       <div className="terminal" onDoubleClick={focusInput}>
         {messages.map((message, index) => {
           return message.from === "ai" ? (
             <div className="terminal__line" id="ai" key={`terminal-line-${index}-${message}`}>
-              <span style={{ color: 'yellow'}}><strong>IA </strong></span> {message.message}
+              <strong>IA: </strong> {message.message}
             </div>
           ) : (
             <div key={index} id="user" className="terminal__line">
-              <span style={{ color: 'yellow'}}><strong>Humain </strong></span> {message.message}
+              <strong>Humain: </strong> {message.message}
             </div>
           );
         })}
