@@ -46,9 +46,13 @@ const Terminal = forwardRef(
           console.log(err);
         })
         .finally(() => {
+          alert(message);
           setIsLoading(false);
         });
     };
+
+
+
     const submitMessage = (event: any) => {
       event.preventDefault();
       setIsLoading(true);
@@ -86,7 +90,7 @@ const Terminal = forwardRef(
               ...messages,
               { from: "user", message: message },
             ]);
-            processMessage(message);
+            submitMessage(e);
             setMessage("");
       
           }
