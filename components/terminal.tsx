@@ -1,5 +1,5 @@
-import {forwardRef, useCallback, useEffect, useRef, useState } from "react";
-import { signIn, useSession } from "next-auth/react"
+import { ForwardedRef, forwardRef, useCallback, useEffect, useRef, useState } from "react";
+import { signIn, signOut, useSession } from "next-auth/react"
 import axios from "axios";
 
 
@@ -7,7 +7,7 @@ import axios from "axios";
 
 const Terminal = forwardRef(
   () => {
-    //const { data: session, status } = useSession();
+    const { data: session, status } = useSession();
     const [isLoading, setIsLoading] = useState(false);
     const [message, setMessage] = useState("");
 
@@ -84,23 +84,23 @@ const Terminal = forwardRef(
           } else {
             submitMessage(e)
           }
-          setInputValue('');
-          (document.getElementById("input") as HTMLTextAreaElement).value = "" ;
+          //setInputValue('');
+          //(document.getElementById("input") as HTMLTextAreaElement).value = "<span style={{ color: 'yellow'}}><strong>Humain </strong></span>" ;
         }
       },
       [input]
     );
 
     return (
-      <div className="terminal"  onDoubleClick={focusInput}>
+      <div className="terminal" ref={inputRef} onDoubleClick={focusInput}>
         {messages.map((message, index) => {
           return message.from === "ai" ? (
-            <div className="terminal__line" id="ai" key={index}>
-              <span style={{ color: 'yellow'}}><strong>IA :</strong></span> {message.message}
+            <div className="terminal__line" id="ai" key={`terminal-line-${index}-${message}`}>
+              <span style={{ color: 'yellow'}}><strong>IA </strong></span> {message.message}
             </div>
           ) : (
             <div key={index} id="user" className="terminal__line">
-              <span style={{ color: 'yellow'}}><strong>Humain :</strong></span> {message.message}
+              <span style={{ color: 'yellow'}}><strong>Humain </strong></span> {message.message}
             </div>
           );
         })}
