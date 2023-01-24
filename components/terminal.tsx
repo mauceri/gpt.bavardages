@@ -92,7 +92,7 @@ const Terminal = forwardRef(
     );
 
     return (
-      <div className="terminal" ref={inputRef} onDoubleClick={focusInput}>
+      <div className="terminal" onDoubleClick={focusInput}>
         {messages.map((message, index) => {
           return message.from === "ai" ? (
             <div className="terminal__line" id="ai" key={`terminal-line-${index}-${message}`}>
