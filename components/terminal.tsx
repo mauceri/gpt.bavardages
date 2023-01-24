@@ -7,7 +7,7 @@ import axios from "axios";
 
 const Terminal = forwardRef(
   () => {
-    const { data: session, status } = useSession();
+    //const { data: session, status } = useSession();
     const [isLoading, setIsLoading] = useState(false);
     const [message, setMessage] = useState("");
 
