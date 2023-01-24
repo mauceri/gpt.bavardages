@@ -1,15 +1,12 @@
 import { ForwardedRef, forwardRef, useCallback, useEffect, useRef, useState } from "react";
-import { TerminalProps } from "./types";
 import { signIn, signOut, useSession } from "next-auth/react"
-
 import axios from "axios";
-import { wrap } from "module";
 
 
 
 
 const Terminal = forwardRef(
-  (props: TerminalProps, ref: ForwardedRef<HTMLDivElement>) => {
+  () => {
     const { data: session, status } = useSession();
     const [isLoading, setIsLoading] = useState(false);
     const [message, setMessage] = useState("");
@@ -87,15 +84,15 @@ const Terminal = forwardRef(
           } else {
             submitMessage(e)
           }
-          //setInputValue('');
-          //(document.getElementById("input") as HTMLTextAreaElement).value = "<span style={{ color: 'yellow'}}><strong>Humain </strong></span>" ;
+          setInputValue('');
+          (document.getElementById("input") as HTMLTextAreaElement).value = "" ;
         }
       },
       [input]
     );
 
     return (
-      <div className="terminal" ref={ref} onDoubleClick={focusInput}>
+      <div className="terminal"  onDoubleClick={focusInput}>
         {messages.map((message, index) => {
           return message.from === "ai" ? (
             <div className="terminal__line" id="ai" key={`terminal-line-${index}-${message}`}>
