@@ -21,9 +21,9 @@ const Terminal = forwardRef(
       inputRef.current?.focus();
     });
 
-    const focusInput = useCallback(() => {
+    const focusInput = () => {
       inputRef.current?.focus();
-    }, []);
+    };
 
     const [messages, setMessages] = useState([
       {
@@ -62,13 +62,11 @@ const Terminal = forwardRef(
     /**
      * When user types something, we update the input value
      */
-    const handleInputChange = useCallback(
+    const handleInputChange = 
       (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         setInputValue(e.target.value);
         setMessage(e.target.value)
-      },
-      []
-    );
+      };
 
     /**
      * When user presses enter, we execute the command
@@ -82,10 +80,18 @@ const Terminal = forwardRef(
             //login?.(null);
             signIn();
           } else {
-            submitMessage(e)
+            e.preventDefault();
+            setIsLoading(true);
+            setMessages((messages) => [
+              ...messages,
+              { from: "user", message: message },
+            ]);
+            processMessage(message);
+            setMessage("");
+      
           }
           //setInputValue('');
-          //(document.getElementById("input") as HTMLTextAreaElement).value = "<span style={{ color: 'yellow'}}><strong>Humain </strong></span>" ;
+          (document.getElementById("input") as HTMLTextAreaElement).value = "" ;
         }
       },
       [input]
