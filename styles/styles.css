@@ -123,7 +123,7 @@
   color: white;
 }
 
-.terminal__prompt__input input {
+.terminal__prompt__input textarea {
   flex: 1;
   width: 100%;
   background-color: transparent;
@@ -134,4 +134,5 @@
   line-height: 1.42;
   font-family: 'IBM Plex Mono', Consolas, Menlo, Monaco, 'Courier New', Courier,
   monospace;
+  word-wrap: break-word;
 } 

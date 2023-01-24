@@ -2,17 +2,17 @@ import { ForwardedRef, forwardRef, useCallback, useEffect, useRef, useState } fr
 import { TerminalProps } from "./types";
 import { signIn, signOut, useSession } from "next-auth/react"
 
+import axios from "axios";
+import { wrap } from "module";
+
+
 
 
 const Terminal = forwardRef(
   (props: TerminalProps, ref: ForwardedRef<HTMLDivElement>) => {
     const { data: session, status } = useSession();
-    const {
-      history = [],
-      promptLabel = '>',
-
-      commands = {},
-    } = props;
+    const [isLoading, setIsLoading] = useState(false);
+    const [message, setMessage] = useState("");
 
     const inputRef = useRef<HTMLInputElement>();
     const [input, setInputValue] = useState<string>('');
@@ -20,7 +20,7 @@ const Terminal = forwardRef(
     /**
      * Focus on the input whenever we render the terminal or click in the terminal
      */
-   useEffect(() => {
+    useEffect(() => {
       inputRef.current?.focus();
     });
 
@@ -28,13 +28,47 @@ const Terminal = forwardRef(
       inputRef.current?.focus();
     }, []);
 
-
+    const [messages, setMessages] = useState([
+      {
+        message: "Bonjour, Je suis votre assistant virtuel ! Que puis-je faire pour vous ?",
+        from: "ai",
+      },
+    ]);
+    const processMessage = async (message: string) => {
+      axios
+        .post("/api/prompt", {
+          message,
+        })
+        .then((res) => {
+          setMessages((messages) => [
+            ...messages,
+            { from: "ai", message: res.data.message },
+          ]);
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
+    };
+    const submitMessage = (event: any) => {
+      event.preventDefault();
+      setIsLoading(true);
+      setMessages((messages) => [
+        ...messages,
+        { from: "user", message: message },
+      ]);
+      processMessage(message);
+      setMessage("");
+    };
     /**
      * When user types something, we update the input value
      */
     const handleInputChange = useCallback(
-      (e: React.ChangeEvent<HTMLInputElement>) => {
+      (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         setInputValue(e.target.value);
+        setMessage(e.target.value)
       },
       []
     );
@@ -43,7 +77,7 @@ const Terminal = forwardRef(
      * When user presses enter, we execute the command
      */
     const handleInputKeyDown = useCallback(
-      (e: React.KeyboardEvent<HTMLInputElement>) => {
+      (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
         if (e.key === 'Enter') {
           let commandToExecute = null;
           if (!session) {
@@ -51,41 +85,46 @@ const Terminal = forwardRef(
             //login?.(null);
             signIn();
           } else {
-            commandToExecute = commands?.[input.toLowerCase()];
-            if (commandToExecute) {
-              commandToExecute?.(null);
-            } else {
-              const repeat = commands?.['default'];
-              repeat?.(input);
-            }
+            submitMessage(e)
           }
           setInputValue('');
+          (document.getElementById("input") as HTMLTextAreaElement).value = "" ;
         }
       },
-      [commands, input]
+      [input]
     );
 
     return (
       <div className="terminal" ref={ref} onDoubleClick={focusInput}>
-        {history.map((line, index) => (
-          <div className="terminal__line" key={`terminal-line-${index}-${line}`}>
-            {line}
-          </div>
-        ))}
+        {messages.map((message, index) => {
+          return message.from === "ai" ? (
+            <div className="terminal__line" id="ai" key={`terminal-line-${index}-${message}`}>
+              <span style={{ color: 'yellow'}}><strong>IA </strong></span> {message.message}
+            </div>
+          ) : (
+            <div key={index} id="user" className="terminal__line">
+              <span style={{ color: 'yellow'}}><strong>Humain </strong></span> {message.message}
+            </div>
+          );
+        })}
+        {isLoading && (
+          <span className="px-4 py-2 rounded-lg inline-block rounded-bl-none bg-gray-300 text-gray-600 text-lg">
+            Attendez ...
+          </span>
+        )}
         <div className="terminal__prompt">
-          <div className="terminal__prompt__label">{promptLabel}</div>
           <div className="terminal__prompt__input">
-            <input
-              title="userInput"
-              placeholder=""
-              type="text"
-              value={input}
-              onKeyDown={handleInputKeyDown}
-              onChange={handleInputChange}
-              // @ts-ignore
-              ref={inputRef}
-            />
-          </div>
+          <textarea
+            title="zone-de-saisie"
+            id='input'
+            placeholder=""
+            defaultValue={input}
+            rows={3}
+            onKeyDown={handleInputKeyDown}
+            onChange={handleInputChange}
+            // @ts-ignore
+            ref={inputRef} />
+         </div>
         </div>
       </div>
     );

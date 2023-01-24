@@ -15,5 +15,4 @@ export type TerminalCommands = {
 export type TerminalProps = {
   history: TerminalHistory;
   promptLabel?: TerminalHistoryItem;
-  commands: TerminalCommands;
-};
+ };
