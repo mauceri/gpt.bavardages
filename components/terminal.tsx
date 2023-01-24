@@ -1,5 +1,5 @@
-import { ForwardedRef, forwardRef, useCallback, useEffect, useRef, useState } from "react";
-import { signIn, signOut, useSession } from "next-auth/react"
+import {forwardRef, useCallback, useEffect, useRef, useState } from "react";
+import { signIn, useSession } from "next-auth/react"
 import axios from "axios";
 
 
@@ -95,12 +95,12 @@ const Terminal = forwardRef(
       <div className="terminal"  onDoubleClick={focusInput}>
         {messages.map((message, index) => {
           return message.from === "ai" ? (
-            <div className="terminal__line" id="ai" key={`terminal-line-${index}-${message}`}>
-              <span style={{ color: 'yellow'}}><strong>IA </strong></span> {message.message}
+            <div className="terminal__line" id="ai" key={index}>
+              <span style={{ color: 'yellow'}}><strong>IA :</strong></span> {message.message}
             </div>
           ) : (
             <div key={index} id="user" className="terminal__line">
-              <span style={{ color: 'yellow'}}><strong>Humain </strong></span> {message.message}
+              <span style={{ color: 'yellow'}}><strong>Humain :</strong></span> {message.message}
             </div>
           );
         })}
