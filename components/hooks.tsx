@@ -50,7 +50,6 @@ export const useTerminal = () => {
 
   return {
     history,
-    pushToHistory,
     terminalRef,
     setTerminalRef,
     resetTerminal,
