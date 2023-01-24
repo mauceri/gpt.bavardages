@@ -47,8 +47,9 @@ const Terminal = forwardRef(
         if (e.key === 'Enter') {
           let commandToExecute = null;
           if (!session) {
-            const login = commands?.['not logged in'];
-            login?.(input);
+            //const login = commands?.['not logged in'];
+            //login?.(null);
+            signIn();
           } else {
             commandToExecute = commands?.[input.toLowerCase()];
             if (commandToExecute) {
@@ -75,6 +76,8 @@ const Terminal = forwardRef(
           <div className="terminal__prompt__label">{promptLabel}</div>
           <div className="terminal__prompt__input">
             <input
+              title="userInput"
+              placeholder=""
               type="text"
               value={input}
               onKeyDown={handleInputKeyDown}

@@ -1,6 +1,6 @@
 //import Head from 'next/head'
 import Layout from 'components/layout'
-import { useSession, getSession } from "next-auth/react"
+import { useSession, signIn, getSession } from "next-auth/react"
 
 import React, {useEffect, useMemo} from 'react';
 import Terminal from 'components/terminal';
@@ -19,29 +19,29 @@ export default function Home() {
     resetTerminal();
 
     pushToHistory(<>
-        <div><strong>Bienvenue</strong>  au coin des bavards !</div>
-        <div style={{fontSize: 20}}>Il vous sera bientôt possible de <span style={{color: 'yellow'}}><strong>bavarder</strong></span> avec un robot d'OpenAI</div>
+        <div><strong>Bienvenue sur bavardages.org</strong></div>
+        <div>Ici, il sera bientôt possible de <span style={{color: 'yellow', fontSize: 20}}><strong>bavarder</strong></span> avec un robot d'OpenAI</div>
         <br/>
-        <div>Vous pouvez taper ce que vous voudrez, je le répèterai</div>
+        <div>Pour l'instant je suis en mode perroquet...</div>
       </>
     );
   }, []);
 
   const commands = useMemo(() => ({
-    'start': async (v:unknown) => {
+    'décollage': async (v:unknown) => {
       await pushToHistory(<>
           <div>
-            <strong>Starting</strong> the server... <span style={{color: 'green'}}>Done</span>
+            <strong>Décollage</strong> du server <span style={{color: 'green'}}>terminé</span>
           </div>
         </>);
     },
-    'alert': async (v:unknown) => {
-      alert('Hello!');
+    'alerte': async (v:unknown) => {
+      alert('Coucou!');
       await pushToHistory(<>
           <div>
-            <strong>Alert</strong>
-            <span style={{color: 'orange', marginLeft: 10}}>
-              <strong>Shown in the browser</strong>
+            <strong>Alerte coucou </strong>
+            <span style={{color: 'orange'}}>
+              <strong>affichée dans le navigateur</strong>
             </span>
           </div>
         </>);
@@ -51,7 +51,7 @@ export default function Home() {
           <div>
             <strong>stutter:</strong>
             <span style={{color: 'orange', marginLeft: 10}}>
-              <strong>Vous n'êtes pas connecté, voyons!</strong> Connectez-vous en utilisant le menu de la marge de gauche. Si la marge est cachée, faites-la apparaître en cliquant sur le hamburger en haut à gauche... 
+              <strong>Vous n'êtes pas connecté.</strong> Connectez-vous en utilisant le menu de la marge de gauche. Si la marge est cachée, faites-la apparaître en cliquant sur le hamburger en haut à gauche... 
             </span>
           </div>
         </>);
@@ -76,7 +76,7 @@ export default function Home() {
       <Terminal
         history={history}
         ref={setTerminalRef}
-        promptLabel={<>Allez, écrivez quelque chose :)</>}
+        promptLabel={<>&gt;</>}
         commands={commands}
       />
     </Layout>
