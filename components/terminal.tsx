@@ -85,10 +85,7 @@ const Terminal = forwardRef(
           } else {
             e.preventDefault();
             setIsLoading(true);
-            setMessages((messages) => [
-              ...messages,
-              { from: "user", message: message },
-            ]);
+            
             submitMessage(e);
             setMessage("");
       
