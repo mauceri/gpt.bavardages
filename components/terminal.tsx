@@ -20,7 +20,7 @@ const Terminal = forwardRef(
     /**
      * Focus on the input whenever we render the terminal or click in the terminal
      */
-    useEffect(() => {
+   useEffect(() => {
       inputRef.current?.focus();
     });
 
@@ -65,7 +65,7 @@ const Terminal = forwardRef(
     );
 
     return (
-      <div className="terminal" ref={ref} onClick={focusInput}>
+      <div className="terminal" ref={ref} onDoubleClick={focusInput}>
         {history.map((line, index) => (
           <div className="terminal__line" key={`terminal-line-${index}-${line}`}>
             {line}
