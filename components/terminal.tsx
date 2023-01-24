@@ -87,8 +87,8 @@ const Terminal = forwardRef(
           } else {
             submitMessage(e)
           }
-          setInputValue('');
-          (document.getElementById("input") as HTMLTextAreaElement).value = "" ;
+          //setInputValue('');
+          //(document.getElementById("input") as HTMLTextAreaElement).value = "<span style={{ color: 'yellow'}}><strong>Humain </strong></span>" ;
         }
       },
       [input]
