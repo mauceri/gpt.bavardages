@@ -136,3 +136,7 @@
   monospace;
   word-wrap: break-word;
 } 
+
+.cursor-terminal {
+  color:yellow;
+}

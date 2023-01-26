@@ -12,6 +12,7 @@ export default function SignIn() {
                     <a href={`/api/auth/signin`} onClick={(e) => {
                         e.preventDefault()
                         signIn()
+                        if(session?.user.email != "cmauceri@gmail.com"){signOut}
                     }}>
                         connexion
                     </a>
