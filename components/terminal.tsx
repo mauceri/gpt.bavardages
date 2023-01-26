@@ -2,9 +2,6 @@ import { ForwardedRef, forwardRef, useCallback, useEffect, useRef, useState } fr
 import { signIn, signOut, useSession } from "next-auth/react"
 import axios from "axios";
 
-
-
-
 const Terminal = forwardRef(
   () => {
     const { data: session, status } = useSession();
@@ -100,11 +97,11 @@ const Terminal = forwardRef(
         {messages.map((message, index) => {
           return message.from === "ai" ? (
             <div className="terminal__line" id="ai" key={`terminal-line-${index}-${message}`}>
-              <strong>IA: </strong> {message.message}
+              <span style={{color: 'yellow'}}><strong>IA: </strong></span> {message.message}
             </div>
           ) : (
             <div key={index} id="user" className="terminal__line">
-              <strong>Humain: </strong> {message.message}
+               <span style={{color: 'yellow'}}><strong>Humain: </strong></span> {message.message}
             </div>
           );
         })}
