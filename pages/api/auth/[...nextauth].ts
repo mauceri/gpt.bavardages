@@ -4,7 +4,7 @@ import FacebookProvider from "next-auth/providers/facebook"
 import GithubProvider from "next-auth/providers/github"
 import TwitterProvider from "next-auth/providers/twitter"
 import Auth0Provider from "next-auth/providers/auth0"
-import { signIn } from "next-auth/react"
+import { signIn} from "next-auth/react"
 import { truncate } from "fs"
 // import AppleProvider from "next-auth/providers/apple"
 // import EmailProvider from "next-auth/providers/email"
@@ -52,21 +52,16 @@ export const authOptions: NextAuthOptions = {
       token.userRole = "admin"
       return token
     },
-    async signIn({user, account, profile, email, credentials }){
+    async signIn({ user, account, profile, email, credentials }) {
       //Ça sera mieux avec une Mongodb (ou une autre BD)
-       console.log(user)
-       if(user.id == '1011775') {
-        console.log("Par Github");
-        console.log(user);
+      console.log(user)
+      if (user.id == '1011775') {
         return true;
-       } else if(user.id == '111139196582476713656') {
-        console.log("Par Google")
-        console.log(user);
+      } else if (user.id == '111139196582476713656') {
         return true;
-       } else {
+      } else {
         return false;
-       }
-        
+      }
     },
   },
 }
