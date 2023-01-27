@@ -4,6 +4,8 @@ import FacebookProvider from "next-auth/providers/facebook"
 import GithubProvider from "next-auth/providers/github"
 import TwitterProvider from "next-auth/providers/twitter"
 import Auth0Provider from "next-auth/providers/auth0"
+import { signIn } from "next-auth/react"
+import { truncate } from "fs"
 // import AppleProvider from "next-auth/providers/apple"
 // import EmailProvider from "next-auth/providers/email"
 //
@@ -49,6 +51,15 @@ export const authOptions: NextAuthOptions = {
     async jwt({ token }) {
       token.userRole = "admin"
       return token
+    },
+    async signIn({user, account, profile, email, credentials }){
+       console.log(user)
+       if(user.email == 'cmauceri@gmail.com') {
+        return true;
+       } else {
+        return false;
+       }
+        
     },
   },
 }
