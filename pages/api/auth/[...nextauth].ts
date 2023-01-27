@@ -53,8 +53,15 @@ export const authOptions: NextAuthOptions = {
       return token
     },
     async signIn({user, account, profile, email, credentials }){
+      //Ça sera mieux avec une Mongodb (ou une autre BD)
        console.log(user)
-       if(user.email == 'cmauceri@gmail.com') {
+       if(user.id == '1011775') {
+        console.log("Par Github");
+        console.log(user);
+        return true;
+       } else if(user.id == '111139196582476713656') {
+        console.log("Par Google")
+        console.log(user);
         return true;
        } else {
         return false;
