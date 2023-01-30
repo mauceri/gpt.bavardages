@@ -1,6 +1,9 @@
 import { ForwardedRef, forwardRef, useCallback, useEffect, useRef, useState } from "react";
 import { signIn, signOut, useSession } from "next-auth/react"
 import axios from "axios";
+import {
+  RedirectToSignIn,
+} from "@clerk/clerk-react";
 
 const Terminal = forwardRef(
   () => {
@@ -75,18 +78,10 @@ const Terminal = forwardRef(
       (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
         if (e.key === 'Enter') {
           let commandToExecute = null;
-          if (!session) {
-            //const login = commands?.['not logged in'];
-            //login?.(null);
-            signIn();
-          } else {
             e.preventDefault();
             setIsLoading(true);
-            
             submitMessage(e);
-            setMessage("");
-      
-          }
+            setMessage("");    
           //setInputValue('');
           (document.getElementById("input") as HTMLTextAreaElement).value = "" ;
         }
