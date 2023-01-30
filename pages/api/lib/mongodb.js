@@ -1,7 +1,5 @@
 import { MongoClient } from 'mongodb';
 
-
-
 export async function getMongoClient() {
   if (!global.mongoClientPromise) {
     const client = new MongoClient(process.env.MONGODB_URI);
