@@ -8,9 +8,6 @@ import {
     RedirectToSignIn,
 } from "@clerk/clerk-react";
 
-
-
-
 export default function Menu() {
     const { user } = useUser();
     console.log("id = %s", user?.id);

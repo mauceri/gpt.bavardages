@@ -14,7 +14,7 @@ export default function Contextes() {
         <div className="contextes">
         <h2>Contextes</h2>
         <ul>
-        {restaurants.map((restaurant, index) => {
+        {restaurants.map((restaurant) => {
           return (<li>{restaurant.name as string}</li>)
         })}
         </ul>
