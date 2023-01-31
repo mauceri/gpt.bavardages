@@ -12,10 +12,10 @@ import { truncate } from "fs"
 
 // For more information on each option (and a full list of options) go to
 // https://next-auth.js.org/configuration/options
-export const authOptions: NextAuthOptions = {
+/*export const authOptions: NextAuthOptions = {
   // https://next-auth.js.org/configuration/providers/oauth
   providers: [
-    /* EmailProvider({
+     EmailProvider({
          server: process.env.EMAIL_SERVER,
          from: process.env.EMAIL_FROM,
        }),
@@ -30,11 +30,10 @@ export const authOptions: NextAuthOptions = {
         keyId: process.env.APPLE_KEY_ID,
       },
     }),
-    */
-    /*FacebookProvider({
+   FacebookProvider({
       clientId: process.env.FACEBOOK_ID as string,
       clientSecret: process.env.FACEBOOK_SECRET as string,
-    }),*/
+    }),
     GithubProvider({
       clientId: process.env.GITHUB_ID as string,
       clientSecret: process.env.GITHUB_SECRET as string,
@@ -67,3 +66,4 @@ export const authOptions: NextAuthOptions = {
 }
 
 export default NextAuth(authOptions)
+*/
