@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 export default function Contextes() {
-  const [restaurants, setRestaurants] = useState([]);
+  const [restaurants, setRestaurants] = useState<any[]>([]);
 
   useEffect(() => {
     (async () => {
@@ -15,7 +15,8 @@ export default function Contextes() {
         <h2>Contextes</h2>
         <ul>
         {restaurants.map((restaurant) => {
-          return (<li key={restaurant._id}>{restaurant.name as string}</li>)
+          if (restaurant != null)
+            return (<li key={restaurant._id}>{restaurant.name as string}</li>)
         })}
         </ul>
       </div>
