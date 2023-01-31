@@ -1,7 +1,7 @@
 import React from "react";
 import { useState } from "react";
-import Menu from '../components/menu'
-import Contextes from '../components/contextes'
+import Menu from './menu'
+import Contextes from './contextes'
 
 export default function Marge() {
   return (
@@ -11,7 +11,8 @@ export default function Marge() {
         onClick={() => {
           let oldWidth = Math.floor(
             getComputedStyle(document.documentElement).
-              getPropertyValue('--marge-width').slice(0, -1)
+              getPropertyValue('--marge-width').
+              slice(0, -1)
           );
           let width = oldWidth
           if (width == 25) {
