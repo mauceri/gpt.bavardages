@@ -15,7 +15,7 @@ export default function Contextes() {
         <h2>Contextes</h2>
         <ul>
         {restaurants.map((restaurant) => {
-          return (<li>{restaurant.name as string}</li>)
+          return (<li key={restaurant.id}>{restaurant.name as string}</li>)
         })}
         </ul>
       </div>
