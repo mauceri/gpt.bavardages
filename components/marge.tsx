@@ -9,10 +9,11 @@ export default function Marge() {
       <button
         className="hamburger"
         onClick={() => {
+          // remove last character
           let oldWidth = Math.floor(
-            getComputedStyle(document.documentElement).
-              getPropertyValue('--marge-width').
-              slice(0, -1)
+            parseInt(getComputedStyle(document.documentElement).
+              getPropertyValue('--marge-width').split(" ").
+              slice(0, -1).join())
           );
           let width = oldWidth
           if (width == 25) {
