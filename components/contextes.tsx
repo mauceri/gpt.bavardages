@@ -5,7 +5,7 @@ export default function Contextes() {
 
   useEffect(() => {
     (async () => {
-        const results = await fetch("/api/list").then(response => response.json());
+        const results = await fetch("/api/list_restaurants").then(response => response.json());
         setRestaurants(results);
     })();
 }, []);

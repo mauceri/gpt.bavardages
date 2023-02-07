@@ -3,37 +3,39 @@ import { useState } from "react";
 import Menu from './menu'
 import Contextes from './contextes'
 
+function youClickedMe() {
+  // remove last character
+  let oldWidth = Math.floor(
+    parseInt(getComputedStyle(document.documentElement).
+      getPropertyValue('--marge-width').split("").
+      slice(0, -1).join(""))
+  );
+
+  let width = oldWidth
+  if (width == 25) {
+    width = 3;
+    document.documentElement.style.setProperty('--contextes-and-menu-display', 'none');
+    document.documentElement.style.setProperty('--marge-background-color', '#3C3C3C');
+    document.documentElement.style.setProperty('--marge-width', '42px');
+    document.documentElement.style.setProperty('--contenu-principal-width', '95%');
+  } else {
+    document.documentElement.style.setProperty('--contextes-and-menu-display', 'flex');
+    document.documentElement.style.setProperty('--marge-background-color', 'white');
+    document.documentElement.style.setProperty('--marge-width', '25%');
+    document.documentElement.style.setProperty('--contenu-principal-width', '73%');
+    width = 25
+  }
+
+  console.log("Marge width changed from %s to %s", `${oldWidth}%`, `${width}%`);
+  //document.documentElement.style.setProperty('--marge-width', `${width}%`);
+
+}
 export default function Marge() {
   return (
     <div className="marge">
       <button
         className="hamburger"
-        onClick={() => {
-          // remove last character
-          let oldWidth = Math.floor(
-            parseInt(getComputedStyle(document.documentElement).
-              getPropertyValue('--marge-width').split(" ").
-              slice(0, -1).join())
-          );
-          let width = oldWidth
-          if (width == 25) {
-            width = 3;
-            document.documentElement.style.setProperty('--contextes-and-menu-display', 'none');
-            document.documentElement.style.setProperty('--marge-background-color', '#3C3C3C');
-            document.documentElement.style.setProperty('--marge-width', '42px');
-            document.documentElement.style.setProperty('--contenu-principal-width', '95%');
-          } else {
-            document.documentElement.style.setProperty('--contextes-and-menu-display', 'flex');
-            document.documentElement.style.setProperty('--marge-background-color', 'white');
-            document.documentElement.style.setProperty('--marge-width', '25%');
-            document.documentElement.style.setProperty('--contenu-principal-width', '73%');
-            width = 25
-          }
-
-          console.log("Marge width changed from %s to %s", `${oldWidth}%`, `${width}%`);
-          //document.documentElement.style.setProperty('--marge-width', `${width}%`);
-
-        }}
+        onClick={youClickedMe}
       >
         {/* icon from heroicons.com */}
         <svg
