@@ -50,7 +50,7 @@ const Terminal = forwardRef(
             setApiKeyMissing(false);
             setMessages((messages) => [
               ...messages,
-              { from: "ai", message: "La clef a été enregistrée" },
+              { from: "ai", message: "La clef a bien été enregistrée" },
             ]);
           } else {
           setMessages((messages) => [
