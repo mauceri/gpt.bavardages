@@ -7,7 +7,6 @@ import {
   useUser,
   RedirectToSignIn,
 } from "@clerk/clerk-react";
-import { userAgent } from "next/server";
 
 
 const Terminal = forwardRef(
@@ -38,7 +37,6 @@ const Terminal = forwardRef(
       },
     ]);
     const processMessage = async (message: string) => {
-      
       axios
         .post("/api/prompt", {
           "APIKeyMissing": apiKeyMissing,
@@ -46,6 +44,7 @@ const Terminal = forwardRef(
           "message": message,
         })
         .then((res) => {
+          console.log("Résultats :",res);
           if(apiKeyMissing && res.data.message === "Update OK") {
             setApiKeyMissing(false);
             setMessages((messages) => [
@@ -60,8 +59,13 @@ const Terminal = forwardRef(
         }
         })
         .catch((err) => {
-          console.log(err.response.data);
           if (err.response.data.message === "OpenAI API key missing") {
+            setApiKeyMissing(true);
+          }
+          if (err.response.data.message === "Update failed") {
+            console.log("La mise à jour a échoué");
+          }
+          if (err.response.data.statusText === "Unauthorized") {
             setApiKeyMissing(true);
           }
         })
@@ -128,7 +132,7 @@ const Terminal = forwardRef(
         )}
         {apiKeyMissing && (
             <span className="px-4 py-2 rounded-lg inline-block rounded-bl-none bg-gray-300 text-gray-600 text-lg">
-              OpenAI API key is missing. Enter your OpenAI API key below.
+              Vous n'avez pas encore renseigné de clé d'API OpenAI. Veuillez donner une clé valide ci-dessous.
             </span>
             )}
         <div className="terminal__prompt">
