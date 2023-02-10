@@ -2,7 +2,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { Configuration, OpenAIApi } from "openai";
 import { connectToDatabase } from "../../lib/mongodb";
-import {cache} from "react"
 
 const getOpenAIAPIKey = async (message: string, apiKeyMissing: boolean, user: any) => {
   let res = { "oaik": "", "message": "" };
@@ -46,19 +45,23 @@ const getOpenAIAPIKey = async (message: string, apiKeyMissing: boolean, user: an
   }
 }
 
-
+var mdbres:any = null;
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
-) {
-  let mdbres = await getOpenAIAPIKey(req.body.message, req.body.APIKeyMissing, req.body.user);
+) { 
+  if (mdbres === null) {
+    console.log("mdbres = null");
+    mdbres = await getOpenAIAPIKey(req.body.message, req.body.APIKeyMissing, req.body.user);
+  }
   if (mdbres?.oaik === "") {
-    console.log("key to set %s", req.body.message);
     res.status(500).json({ message: "OpenAI API key missing" });
+    mdbres = null;
     return;
   } else if (mdbres?.message === "Update OK") {
     res.status(200).json({ message: "Update OK" });
+    mdbres = null;
     return;
   }
 

@@ -14,7 +14,7 @@ const Terminal = forwardRef(
     const [isLoading, setIsLoading] = useState(false);
     const [message, setMessage] = useState("");
     const [apiKeyMissing, setApiKeyMissing] = useState(false);
-   
+
     const inputRef = useRef<HTMLInputElement>();
     const [input, setInputValue] = useState<string>('');
     const { isLoaded, isSignedIn, user } = useUser();
@@ -37,33 +37,43 @@ const Terminal = forwardRef(
       },
     ]);
     const processMessage = async (message: string) => {
+      const qargs = 
+      JSON.stringify({
+        "APIKeyMissing": apiKeyMissing,
+        "user": user,
+        "message": message,
+      });
       axios
-        .post("/api/prompt", {
+        .post("/api/prompt?args=" + qargs, {
           "APIKeyMissing": apiKeyMissing,
-          "user":user,
+          "user": user,
           "message": message,
         })
         .then((res) => {
-          console.log("Résultats :",res);
-          if(apiKeyMissing && res.data.message === "Update OK") {
+          console.log("Résultats :", res);
+          if (apiKeyMissing && res.data.message === "Update OK") {
             setApiKeyMissing(false);
             setMessages((messages) => [
               ...messages,
               { from: "ai", message: "La clef a bien été enregistrée" },
             ]);
           } else {
-          setMessages((messages) => [
-            ...messages,
-            { from: "ai", message: res.data.message },
-          ]);
-        }
+            setMessages((messages) => [
+              ...messages,
+              { from: "ai", message: res.data.message },
+            ]);
+          }
         })
         .catch((err) => {
+          console.log("Erreur ",err.response.data.message);
           if (err.response.data.message === "OpenAI API key missing") {
             setApiKeyMissing(true);
           }
           if (err.response.data.message === "Update failed") {
             console.log("La mise à jour a échoué");
+          }
+          if (err.response.data.message === "User not found") {
+            console.log("Utilisateur inconnu");
           }
           if (err.response.data.statusText === "Unauthorized") {
             setApiKeyMissing(true);
@@ -110,8 +120,8 @@ const Terminal = forwardRef(
           (document.getElementById("input") as HTMLTextAreaElement).value = "";
         }
       };
-      
-    
+
+
     return (
       <div className="terminal" onDoubleClick={focusInput}>
         {messages.map((message, index) => {
@@ -131,10 +141,10 @@ const Terminal = forwardRef(
           </span>
         )}
         {apiKeyMissing && (
-            <span className="px-4 py-2 rounded-lg inline-block rounded-bl-none bg-gray-300 text-gray-600 text-lg">
-              Vous n'avez pas encore renseigné de clé d'API OpenAI. Veuillez donner une clé valide ci-dessous.
-            </span>
-            )}
+          <span className="px-4 py-2 rounded-lg inline-block rounded-bl-none bg-gray-300 text-gray-600 text-lg">
+            Vous n'avez pas encore enregistré de clé d'API OpenAI valide. Veuillez donner une clé valide ci-dessous.
+          </span>
+        )}
         <div className="terminal__prompt">
           <div className="terminal__prompt__input">
             <textarea
