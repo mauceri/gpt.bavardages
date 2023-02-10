@@ -46,11 +46,18 @@ const getOpenAIAPIKey = async (message: string, apiKeyMissing: boolean, user: an
 }
 
 var mdbres:any = null;
+var userId:any = null;
+var keyCache = [{userId:"",key:""}]
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) { 
+  if(userId != null && userId != req.body.user.id) {
+    console.log("Alerte %s est un espion",req.body.user.id);
+    res.status(500).json({ message: "OpenAI API key missing" });
+    mdbres = null;
+  }
   if (mdbres === null) {
     console.log("mdbres = null");
     mdbres = await getOpenAIAPIKey(req.body.message, req.body.APIKeyMissing, req.body.user);
@@ -64,7 +71,8 @@ export default async function handler(
     mdbres = null;
     return;
   }
-
+  userId = req.body.user?.id;
+  keyCache.push({userId:userId,key:mdbres.apiKey});
   const configuration = new Configuration({
     apiKey: mdbres?.oaik,
   });
@@ -94,6 +102,6 @@ export default async function handler(
       res.status(500).json({ message: "AI error" });
     }
   } catch (err:any) {
-    res.status(401).json({ message: err.message, statusText: err?.response.statusText });
+    res.status(401).json(err);
   }
 }

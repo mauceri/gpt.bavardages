@@ -1,11 +1,7 @@
 import { useEffect, useState } from "react";
 
 export default function Contextes() {
-  const [restaurants, setRestaurants] =
-    useState<any[]>([
-      { _id: 1, name: "a" },
-      { _id: 2, name: "b" },
-      { _id: 3, name: "c" }]);
+  const [restaurants, setRestaurants] = useState<any[]>([]);
 
   useEffect(() => {
     (async () => {
