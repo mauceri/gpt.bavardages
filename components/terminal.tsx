@@ -50,7 +50,6 @@ const Terminal = forwardRef(
           "message": message,
         })
         .then((res) => {
-          console.log("Résultats :", res);
           if (apiKeyMissing && res.data.message === "Update OK") {
             setApiKeyMissing(false);
             setMessages((messages) => [
