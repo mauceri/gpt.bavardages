@@ -12,6 +12,7 @@ export default async function handler(req, res) {
             .toArray();
 
         res.json(results);
+        
         console.log("done")
     } catch (e) {
         console.error(e);
