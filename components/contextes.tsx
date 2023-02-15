@@ -11,7 +11,6 @@ export default function Contextes() {
       if (user) {
         const results = await fetch("/api/queryMDB?op=list_contexts&user=" + user?.id).then(response => response.json());
         setContextes(results);
-        console.log("Liste de contextes après l'appel ", results);
       }
     })();
   }, [user]);
@@ -22,9 +21,9 @@ export default function Contextes() {
       <SignedIn>
         <ul>
           {contextes.map((contexte: any) => {
-            if (contexte !== null)
-              return (<li key={contexte._id}>{contexte.name as string}</li>)
-          })}
+            if (contexte !== null) {
+              return <li key={contexte._id}>{contexte.name as string}</li>
+          }})}
         </ul>
       </SignedIn>
     </div>

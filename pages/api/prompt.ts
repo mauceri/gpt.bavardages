@@ -30,11 +30,12 @@ const getOpenAIAPIKey = async (message: string, apiKeyMissing: boolean, user: an
       if (result === null) {
         res.oaik = "";
         res.message = "User not found";
-        console.log(res); 
-      } else {
+      } else if(result.OpenAIAPIKey === undefined){
+        res.message = "OpenAI API key missing";
+        res.oaik = "";
+      }else {
         res.oaik = result.OpenAIAPIKey;
         res.message = "OK";
-        console.log("Clef retrouvée %s", res.oaik);
       }
       return res;
     } catch (e) {
@@ -48,6 +49,7 @@ const getOpenAIAPIKey = async (message: string, apiKeyMissing: boolean, user: an
 var mdbres:any = null;
 var userId:any = null;
 var keyCache = [{userId:"",key:""}]
+
 
 export default async function handler(
   req: NextApiRequest,
@@ -102,6 +104,7 @@ export default async function handler(
       res.status(500).json({ message: "AI error" });
     }
   } catch (err:any) {
+    //console.log(err);
     res.status(401).json(err);
   }
 }
