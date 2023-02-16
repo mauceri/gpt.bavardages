@@ -107,7 +107,7 @@
 
 .terminal__prompt {
   display: flex;
-  align-items: center;
+  /*align-items: center;*/
 }
 
 .terminal__prompt__label {
@@ -124,6 +124,7 @@
 }
 
 .terminal__prompt__input textarea {
+  display: inline-block;
   flex: 1;
   width: 100%;
   background-color: transparent;
@@ -139,4 +140,8 @@
 
 .cursor-terminal {
   color:yellow;
+}
+
+.align-textarea {
+  vertical-align: top;
 }

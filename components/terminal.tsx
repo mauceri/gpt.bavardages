@@ -145,6 +145,7 @@ const Terminal = forwardRef(
           </span>
         )}
         <div className="terminal__prompt">
+        <span className="align-textarea" style={{ color: 'yellow' }}><strong>{user ? user.firstName + ":" : "Humain:"} </strong></span>
           <div className="terminal__prompt__input">
             <textarea
               title="zone-de-saisie"
