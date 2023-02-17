@@ -1,6 +1,8 @@
 import { SignedIn, UserButton, useUser } from "@clerk/clerk-react";
 import { useEffect, useState } from "react";
-
+import {
+  FolderOutlined,
+} from '@ant-design/icons';
 export default function Contextes() {
   const { isLoaded, isSignedIn, user } = useUser();
   const [contextes, setContextes] = useState([]);
@@ -17,7 +19,7 @@ export default function Contextes() {
 
   return (
     <div className="contextes">
-      <h2>Contextes</h2>
+      <span><FolderOutlined style={{fontSize: 20}}/> </span>
       <SignedIn>
         <ul>
           {contextes.map((contexte: any) => {

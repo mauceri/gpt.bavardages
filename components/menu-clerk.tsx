@@ -6,11 +6,11 @@ import {
     RedirectToSignIn,
 } from "@clerk/clerk-react";
 
-export default function Menu() {
+export default function MenuClerk() {
     const { isLoaded, isSignedIn, user } = useUser();
 
     return (
-        < div className="menu" >
+        < div className="menu-clerk" >
             <SignedIn>
                 {user ?
                     <><UserButton /><p>{user.firstName} </p></> : null
