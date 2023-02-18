@@ -71,27 +71,35 @@ const AntdList: React.FC = () => {
     ) : null;
 
   return (
+    <div
+      id="scrollableDiv"
+      style={{
+        height: '70vh',
+        overflow: 'scroll',
+      }}
+    >
     <List
       className="demo-loadmore-list"
+      split={true}
       loading={initLoading}
-      itemLayout="horizontal"
+      itemLayout="vertical"
       loadMore={loadMore}
       dataSource={list}
       renderItem={(item) => (
         <List.Item
-          actions={[<a key="list-loadmore-edit">edit</a>, <a key="list-loadmore-more">more</a>]}
-        >
+          actions={[<a key="list-loadmore-edit">edit</a>, 
+          <a key="list-loadmore-more">more</a>
+        ]}>
           <Skeleton avatar title={false} loading={item.loading} active>
             <List.Item.Meta
-              avatar={<Avatar src={item.picture.large} />}
+              avatar={<Avatar src={item.picture.thumbnail} />}
               title={<a href="https://ant.design">{item.name?.last}</a>}
-              description="Ant Design, a design language for background applications, is refined by Ant UED Team"
             />
-            <div>content</div>
           </Skeleton>
         </List.Item>
       )}
     />
+    </div>
   );
 };
 
