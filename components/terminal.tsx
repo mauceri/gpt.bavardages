@@ -8,9 +8,11 @@ import {
   RedirectToSignIn,
 } from "@clerk/clerk-react";
 
-
-const Terminal = forwardRef(
-  () => {
+interface TerminalProps {
+  style?: React.CSSProperties;
+}
+const Terminal = forwardRef<HTMLDivElement, TerminalProps>((props,ref) => {
+    const style = props.style;
     const [isLoading, setIsLoading] = useState(false);
     const [message, setMessage] = useState("");
     const [apiKeyMissing, setApiKeyMissing] = useState(false);
@@ -18,7 +20,7 @@ const Terminal = forwardRef(
     const inputRef = useRef<HTMLInputElement>();
     const [input, setInputValue] = useState<string>('');
     const { isLoaded, isSignedIn, user } = useUser();
-
+    
     /**
      * Focus on the input whenever we render the terminal or click in the terminal
      */
@@ -122,15 +124,15 @@ const Terminal = forwardRef(
 
 
     return (
-      <div className="terminal" onDoubleClick={focusInput}>
+      <div className="terminal" onDoubleClick={focusInput} style = {style} >
         {messages.map((message, index) => {
           return message.from === "ai" ? (
             <div className="terminal__line" id="ai" key={`terminal-line-${index}-${message}`}>
-              <span style={{ color: 'yellow' }}><strong>IA: </strong></span> {message.message}
+              <span style={{ color: 'blue' }}><strong>IA: </strong></span> {message.message}
             </div>
           ) : (
             <div key={index} id="user" className="terminal__line">
-              <span style={{ color: 'yellow' }}><strong>{user ? user.firstName + ":" : "Humain:"} </strong></span> {message.message}
+              <span style={{ color: 'blue' }}><strong>{user ? user.firstName + ":" : "Humain:"} </strong></span> {message.message}
             </div>
           );
         })}
@@ -145,7 +147,7 @@ const Terminal = forwardRef(
           </span>
         )}
         <div className="terminal__prompt">
-        <span className="align-textarea" style={{ color: 'yellow' }}><strong>{user ? user.firstName + ":" : "Humain:"} </strong></span>
+        <span className="align-textarea" style={{ color: 'blue' }}><strong>{user ? user.firstName + ":" : "Humain:"} </strong></span>
           <div className="terminal__prompt__input">
             <textarea
               title="zone-de-saisie"

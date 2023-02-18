@@ -1,7 +1,7 @@
 import '../styles/styles.css'
 import type { AppProps } from 'next/app'
 import { ClerkProvider } from "@clerk/clerk-react"
-import { ConfigProvider } from 'antd';
+import { ConfigProvider, theme } from 'antd';
 
 export default function App(
   { Component,
@@ -11,18 +11,9 @@ export default function App(
 
 
   return (
-    <ConfigProvider
-      theme={{
-        token: {
-          colorPrimary: "#3C3C3C",
-          colorInfo: "#3c3c3c",
-          colorTextBase: "#c4c4c4",
-          colorBgBase: "#3c3c3c"
-        },
-      }}>
+    
       <ClerkProvider publishableKey={clerk_pub_key as string}>
         <Component {...pageProps} />
       </ClerkProvider>
-    </ConfigProvider>
   )
 }

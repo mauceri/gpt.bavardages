@@ -1,119 +1,66 @@
-.page-principale{
-    display: flex;
-    /*size: auto;*/
-    height: 100vh;
-    width: 100vw;
-  }
 
- 
-  /*.marge {
-    display: flex;
-    flex-direction: column;
-    width: 25%;
-    height: 100%;
-    border-color:#3C3C3C;
-    border-style: solid;
+:root {
+  --background-color:#1677ff;
+  --color:#1677ff;
+}
+
+
+.page-principale {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+}
+
+.contextes {
+  flex-direction: column;
+  align-items: left;
+  margin-left: 20px;
+  justify-content: center;
+  color: #1677ff;
+}
+
+.menu-clerk {
+  margin-top: 20px;
+  margin-left: 20px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #1677ff;
+}
+
+
+
+
+
+/*.site-layout {
+    background-color: #8d8989;
   }*/
-  :root{
-    --marge-width: 25%;
-    --contenu-principal-width: 73%;
-    --contextes-and-menu-display: flex;
-    --marge-background-color: white,
-    }
-  .marge  {
-    display: flex;
-    flex-direction: column;
-    width: var(--marge-width);
-    height: 100%;
-    border-color:#3C3C3C;
-    background-color: var(--marge-background-color);
-    border-style: solid;
-  }
-  
-  .contenu-principal {
-    width: var(--contenu-principal-width);
-    /*width: 90%;*/
-    height: 100%;
-    border-color:#3C3C3C;
-    border-style: solid;
-    display: flex;
-    align-items: center;
-    justify-content: left;
-  }
-  
-  .contextes{
-    display: var(--contextes-and-menu-display);
-    flex-direction: column;
-    align-items: left;
-    margin-left: 20px;
-    justify-content: center;
-    color: #C4C4C4;
-  }
-  .menu-clerk{
-    margin-top: 20px;
-    margin-left: 20px;
-    display: var(--contextes-and-menu-display);
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    color: #C4C4C4;
-  }
-  #marge-mobile {
-    text-align: center;
-  
-    /* Prevent sidebar from showing a scrollbar on page */
-    overflow: auto;
-  }
-  
-  
-  .hamburger {
-    /* removes default border on button element*/
-    border: 0;
-    height: 40px;
-    width: 40px;
-    padding: 0.5rem;
-    /*border-radius: 50%;*/
-    background-color: #3C3C3C;
-    cursor: pointer;
-    transition: background-color 0.2s ease-in-out;
-  /* positions the icon to the right and center aligns it vertically*/
-    /*position: absolute;*/
-    /*top: 50%;*/
-    /*right: 25px;*/
-    /*transform: translateY(-50%);*/
-    /*display: none;*/
-  }
-  
-  .hamburger:hover {
-    background-color: #8d8989;
-  } 
 
-  .site-layout {
-    background-color: #8d8989;
-  }
-  .header-general {
-    /*padding: 0;*/
-    background-color:white;
-    /*color: #C4C4C4;*/
-  }
-  .trigger {
-    color: yellow;
-  }
-  .terminal {
-    height: 100%;
-    width: 100%;
-    padding-left: 10px;;
-   
-    overflow-y: auto;
-    background-color: #3C3C3C;
-    color: #C4C4C4;
-   
-    
-    font-size: 14px;
-    line-height: 1.42;
-    font-family: 'IBM Plex Mono', Consolas, Menlo, Monaco, 'Courier New', Courier,
+.trigger {
+  color: #1677ff;
+}
+
+.terminal {
+  height: 100%;
+  width: 100%;
+  padding-left: 10px;
+  border-top: 1px;
+  border-top-width: 2px;
+  border-top-color: #1677ff;
+
+  overflow-y: auto;
+  /*background-color: #3C3C3C;
+    color: #C4C4C4;*/
+  /*background-color: #e6f4ff;
+  color:#1677ff;*/
+  background-color:#ffffff;
+  color: #1677ff;
+  
+  font-size: 14px;
+  line-height: 1.42;
+  font-family: 'IBM Plex Mono', Consolas, Menlo, Monaco, 'Courier New', Courier,
     monospace;
-    text-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+  /*text-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);*/
 }
 
 .terminal__line {
@@ -128,7 +75,7 @@
 
 .terminal__prompt__label {
   flex: 0 0 auto;
-  color: #F9EF00;
+  color: #1677ff;
 }
 
 .terminal__prompt__input {
@@ -144,25 +91,25 @@
   flex: 1;
   width: 100%;
   background-color: transparent;
-  color: white;
   border: 0;
   outline: none;
   font-size: 14px;
   line-height: 1.42;
   font-family: 'IBM Plex Mono', Consolas, Menlo, Monaco, 'Courier New', Courier,
-  monospace;
+    monospace;
   word-wrap: break-word;
-} 
+}
 
 .cursor-terminal {
-  color:yellow;
+  color: #1677ff;
 }
 
 .align-textarea {
   vertical-align: top;
+  color: #1677ff;
 }
 
- .trigger {
+.trigger {
   padding: 0 24px;
   font-size: 18px;
   line-height: 64px;
@@ -170,17 +117,16 @@
   transition: color 0.3s;
 }
 
- .trigger:hover {
+.trigger:hover {
   color: #1890ff;
 }
 
- .logo {
-  height: 32px;
-  margin: 16px;
-  background: white;
-}
 
 .site-layout {
   height: 100vh;
 }
 
+
+.demo-loadmore-list {
+  min-height: 350px;
+}
