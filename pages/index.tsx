@@ -45,9 +45,8 @@ function getItem(
 
 const items: MenuItem[] =
   [
-    getItem('Toggle theme', '1', <SwitcherOutlined />),
-    getItem('Label 2', '2', <VideoCameraOutlined />),
-    getItem('Label 3', '3', <UploadOutlined />),
+    getItem('Bascule du thème', '1', <SwitcherOutlined />),
+    getItem('Chargement...', '3', <UploadOutlined />),
   ];
 
 
@@ -129,7 +128,7 @@ export default function Home() {
             <Terminal
               style={{
                 backgroundColor: (isDarkMode ?  "#111a2c" :"#ffffff" ),
-                color: (isDarkMode ? "#ffffff" :"#000000" )
+                color: (isDarkMode ? "rgba(255, 255, 255, 0.85)" :"#000000" )
               }} />
           </Content>
         </Layout>
