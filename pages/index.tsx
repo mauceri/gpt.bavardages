@@ -98,6 +98,14 @@ export default function Home() {
           }}>
           <MenuClerk />
           <Menu
+            style={{
+              borderTopColor: token.colorPrimary,
+              borderTopWidth: 'thin',
+              borderTopStyle: 'solid',
+              borderBottomColor: token.colorPrimary,
+              borderBottomWidth: 'thin',
+              borderBottomStyle: 'solid',
+            }}
             //theme= {isDarkMode ? "dark" : "light"}
             onClick={onClick}
             mode="inline"
@@ -111,8 +119,10 @@ export default function Home() {
             className='header'
             style={{
               padding: 0,
+              //backgroundColor: useToken().token.colorBgContainer,
               backgroundColor: (isDarkMode ? "#111a2c" : "#ffffff"),
-              color: (isDarkMode ? "#ffffff" :"#000000" ),
+              color: (isDarkMode ? "#ffffff" : "#000000"),
+              //color: useToken().token.colorPrimaryActive,
               //backgroundColor: 'black',
               borderBottomColor: token.colorPrimary,
               borderBottomWidth: 'thin',
@@ -123,12 +133,14 @@ export default function Home() {
               onClick: () => setCollapsed(!collapsed),
             })}
           </Header>
-          
+
           <Content >
             <Terminal
               style={{
-                backgroundColor: (isDarkMode ?  "#111a2c" :"#ffffff" ),
-                color: (isDarkMode ? "rgba(255, 255, 255, 0.85)" :"#000000" )
+                //backgroundColor: useToken().token.colorBgContainer,
+                //color: useToken().token.colorPrimaryActive,
+                backgroundColor: (isDarkMode ? "#111a2c" : "#ffffff"),
+                color: (isDarkMode ? "rgba(255, 255, 255, 0.85)" : "#000000")
               }} />
           </Content>
         </Layout>

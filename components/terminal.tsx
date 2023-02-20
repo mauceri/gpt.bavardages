@@ -157,6 +157,7 @@ const Terminal = forwardRef<HTMLDivElement, TerminalProps>((props,ref) => {
               rows={3}
               onKeyDown={handleInputKeyDown}
               onChange={handleInputChange}
+              style={style}
               // @ts-ignore
               ref={inputRef} />
           </div>

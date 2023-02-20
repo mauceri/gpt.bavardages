@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Avatar, Button, List, Skeleton } from 'antd';
+import { Avatar, Button, List, Skeleton, Space } from 'antd';
+import {
+  EditOutlined,
+  DeleteOutlined,
+  DeleteFilled,
+  MessageOutlined,
+} from '@ant-design/icons';
 
 interface DataType {
   gender?: string;
@@ -20,8 +26,11 @@ interface DataType {
 
 const count = 3;
 const fakeDataUrl = `https://randomuser.me/api/?results=${count}&inc=name,gender,email,nat,picture&noinfo`;
-
-const AntdList: React.FC = () => {
+interface AntdListProps {
+  style?: React.CSSProperties;
+}
+const AntdList: React.FC<AntdListProps> = ((props) => {
+  const style: React.CSSProperties = props.style as React.CSSProperties;
   const [initLoading, setInitLoading] = useState(true);
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<DataType[]>([]);
@@ -78,29 +87,38 @@ const AntdList: React.FC = () => {
         overflow: 'scroll',
       }}
     >
-    <List
-      className="demo-loadmore-list"
-      split={true}
-      loading={initLoading}
-      itemLayout="vertical"
-      loadMore={loadMore}
-      dataSource={list}
-      renderItem={(item) => (
-        <List.Item
-          actions={[<a key="list-loadmore-edit">edit</a>, 
-          <a key="list-loadmore-more">more</a>
-        ]}>
-          <Skeleton avatar title={false} loading={item.loading} active>
-            <List.Item.Meta
-              avatar={<Avatar src={item.picture.thumbnail} />}
-              title={<a href="https://ant.design">{item.name?.last}</a>}
-            />
-          </Skeleton>
-        </List.Item>
-      )}
-    />
+      <List
+        className="demo-loadmore-list"
+        header={<div style={style}>Contextes</div>}
+
+        split={true}
+        loading={initLoading}
+        itemLayout="vertical"
+        loadMore={loadMore}
+        dataSource={list}
+        renderItem={(item) => (
+          <List.Item
+            actions={[
+              <Space>
+                <Button key="edit" icon={<EditOutlined style={{ fontSize: '10px' }} />} />
+                <Button key="delete" danger icon={<DeleteFilled style={{ fontSize: '10px' }} />} />
+              </Space>,
+            ]}>
+            <Skeleton avatar title={false} loading={item.loading} active>
+              <List.Item.Meta
+                avatar={<Button key="edit" icon={<MessageOutlined style={{ fontSize: '10px' }} />} />}
+                title={
+                  <div style={{ width: '100%', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    {item.name.last}
+                  </div>
+                }
+              />
+            </Skeleton>
+          </List.Item>
+        )}
+      />
     </div>
   );
-};
+});
 
 export default AntdList;
