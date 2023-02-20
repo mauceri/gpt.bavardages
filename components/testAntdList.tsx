@@ -123,7 +123,9 @@ const AntdList: React.FC<AntdListProps> = ((props) => {
                 <Button key="delete" danger icon={<DeleteFilled style={{ fontSize: '10px' }} />} />
               </Space>,
             ]}>
-            <Skeleton avatar title={false} loading={item.loading} active>
+            <Skeleton avatar title={false} 
+            //</List.Item>loading={item.loading} 
+            active>
               <List.Item.Meta
                 avatar={<Button key="edit" icon={<MessageOutlined style={{ fontSize: '10px' }} />} />}
                 title={
