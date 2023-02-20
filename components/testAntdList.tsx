@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { Avatar, Button, List, Skeleton, Space } from 'antd';
+import { Avatar, Button, Divider, List, Skeleton, Space } from 'antd';
 import {
   EditOutlined,
-  DeleteOutlined,
+  MenuOutlined,
   DeleteFilled,
   MessageOutlined,
+  PlusSquareOutlined,
 } from '@ant-design/icons';
+import { useUser } from '@clerk/clerk-react';
 
 interface DataType {
   gender?: string;
@@ -35,6 +37,18 @@ const AntdList: React.FC<AntdListProps> = ((props) => {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<DataType[]>([]);
   const [list, setList] = useState<DataType[]>([]);
+  const { isLoaded, isSignedIn, user } = useUser();
+  const [contextes, setContextes] = useState([]);
+
+  useEffect(() => {
+    (async () => {
+
+      if (user) {
+        const results = await fetch("/api/queryMDB?op=list_contexts&user=" + user?.id).then(response => response.json());
+        setContextes(results);
+      }
+    })();
+  }, [user]);
 
   useEffect(() => {
     fetch(fakeDataUrl)
@@ -75,7 +89,7 @@ const AntdList: React.FC<AntdListProps> = ((props) => {
           lineHeight: '32px',
         }}
       >
-        <Button onClick={onLoadMore}>loading more</Button>
+        <Button onClick={onLoadMore}>Encore</Button>
       </div>
     ) : null;
 
@@ -85,17 +99,22 @@ const AntdList: React.FC<AntdListProps> = ((props) => {
       style={{
         height: '70vh',
         overflow: 'scroll',
-      }}
-    >
+      }}>
+      <div style={{ fontSize: "16px", color: "blue", width: '100%', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+       
+        <Button key="new" icon={<PlusSquareOutlined style={{ fontSize: '10px' }} />} />
+        <span>  Nouveau bavardage </span>
+        
+      </div>
       <List
         className="demo-loadmore-list"
-        header={<div style={style}>Contextes</div>}
+        //header={<><div style={{ fontSize: "16px", color: "blue", width: '100%', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}><MenuOutlined /> Contextes</div></>}
 
         split={true}
         loading={initLoading}
         itemLayout="vertical"
-        loadMore={loadMore}
-        dataSource={list}
+        //loadMore={loadMore}
+        dataSource={contextes}
         renderItem={(item) => (
           <List.Item
             actions={[
@@ -109,7 +128,7 @@ const AntdList: React.FC<AntdListProps> = ((props) => {
                 avatar={<Button key="edit" icon={<MessageOutlined style={{ fontSize: '10px' }} />} />}
                 title={
                   <div style={{ width: '100%', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                    {item.name.last}
+                    {item.name}
                   </div>
                 }
               />

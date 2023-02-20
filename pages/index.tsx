@@ -102,9 +102,9 @@ export default function Home() {
               borderTopColor: token.colorPrimary,
               borderTopWidth: 'thin',
               borderTopStyle: 'solid',
-              borderBottomColor: token.colorPrimary,
+              /*borderBottomColor: token.colorPrimary,
               borderBottomWidth: 'thin',
-              borderBottomStyle: 'solid',
+              borderBottomStyle: 'solid',*/
             }}
             //theme= {isDarkMode ? "dark" : "light"}
             onClick={onClick}
