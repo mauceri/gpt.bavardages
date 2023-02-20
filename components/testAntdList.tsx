@@ -99,7 +99,7 @@ const AntdList: React.FC<AntdListProps> = ((props) => {
         renderItem={(item) => (
           <List.Item
             actions={[
-              <Space>
+              <Space key={1}>
                 <Button key="edit" icon={<EditOutlined style={{ fontSize: '10px' }} />} />
                 <Button key="delete" danger icon={<DeleteFilled style={{ fontSize: '10px' }} />} />
               </Space>,
