@@ -10,6 +10,8 @@ import {
 import { useUser } from '@clerk/clerk-react';
 
 interface BavardageType {
+  _id: string;
+  id:string;
   name: string;
   date?: string;
   loading: boolean;
@@ -73,7 +75,7 @@ const AntdList: React.FC<AntdListProps> = ((props) => {
           renderItem={(item: BavardageType) => (
             <List.Item
               actions={[
-                <Button style={{ border: 'none', padding: '0px', margin: '0px' }}>
+                <Button key={item._id} style={{ border: 'none', padding: '0px', margin: '0px' }}>
                   <EditOutlined />
                 </Button>
               ]}>
