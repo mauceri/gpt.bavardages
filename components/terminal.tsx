@@ -121,8 +121,7 @@ const Terminal = forwardRef<HTMLDivElement, TerminalProps>((props,ref) => {
           (document.getElementById("input") as HTMLTextAreaElement).value = "";
         }
       };
-
-
+      
     return (
       <div className="terminal" onDoubleClick={focusInput} style = {style} >
         {messages.map((message, index) => {

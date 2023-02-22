@@ -17,7 +17,7 @@ export default async function handler(
 
 
     switch (op) {
-        case "list_contexts": {
+        case "list_bavardages": {
             let results: any;
             try {
                 const result = await database
@@ -43,14 +43,15 @@ export default async function handler(
             res.status(200).json(results);
             break;
         }
-        case "get_context": {
+        case "get_bavardage": {
             res.status(200).json("rien");
             break;
         }
-        case "create_context": {
+        case "create_bavardage": {
             database.collection("utilisateurs").updateOne(
                 { id: userId },
-                { $push: {contexts:{name:name,date:date,messages:[]}} })
+                { $push: {contexts:{name:name,date:date,messages:[]}}},
+                { upsert: true })
                 .then((result: any) => { console.log(result);res.status(200).json(result); })
                 .catch((err: any) => { res.status(500).json(err); })
             break;
