@@ -104,7 +104,7 @@ export default function Home() {
               borderBottomColor: token.colorPrimary,
               borderBottomWidth: 'thin',
               borderBottomStyle: 'solid',
-              marginBottom: '1px',
+             
             }}
             //theme= {isDarkMode ? "dark" : "light"}
             onClick={onClick}

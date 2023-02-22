@@ -26,7 +26,6 @@ const AntdList: React.FC<AntdListProps> = ((props) => {
   const [initLoading, setInitLoading] = useState(true);
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<BavardageType[]>([]);
-  const [list, setList] = useState<BavardageType[]>([]);
   const { isLoaded, isSignedIn, user } = useUser();
   const [contextes, setContextes] = useState<BavardageType[]>([]);
 
@@ -36,7 +35,6 @@ const AntdList: React.FC<AntdListProps> = ((props) => {
         .then((res) => res.json())
         .then((res) => {
           setInitLoading(false);
-          setData(res);
           setContextes(res);
         });
     }
@@ -49,8 +47,8 @@ const AntdList: React.FC<AntdListProps> = ((props) => {
       id="scrollableDiv"
       style={{
         height: '70vh',
-        //width: '30vh',
         overflow: 'scroll',
+        paddingTop: '10px'
       }}>
       
         <Button style={{
@@ -70,7 +68,6 @@ const AntdList: React.FC<AntdListProps> = ((props) => {
           split={true}
           loading={initLoading}
           itemLayout="horizontal"
-          //loadMore={loadMore}
           dataSource={contextes}
           renderItem={(item: BavardageType) => (
             <List.Item
