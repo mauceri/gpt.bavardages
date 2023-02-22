@@ -1,8 +1,8 @@
 {
   "extends": "next/core-web-vitals",
   "rules": {
-    "react/no-inline-styles": 0,
-    "prettier/prettier": 0,
+    "react/no-inline-styles": "off",
+    "prettier/prettier": "off",
     "react/no-unescaped-entities": "off",
     "@next/next/no-page-custom-font": "off"
   }

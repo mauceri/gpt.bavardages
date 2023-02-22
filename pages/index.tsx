@@ -19,8 +19,7 @@ import {
   RedirectToSignIn,
 } from "@clerk/clerk-react";
 import MenuClerk from '@/components/menu-clerk';
-import Contextes from '@/components/contextes';
-import AntdList from '@/components/testAntdList';
+import AntdList from '@/components/liste-bavardages';
 
 type MenuItem = Required<MenuProps>['items'][number];
 
@@ -94,7 +93,7 @@ export default function Home() {
           style={{
             borderRightColor: token.colorPrimary,
             borderRightWidth: 'thin',
-            borderRightStyle: 'solid'
+            borderRightStyle: 'solid',
           }}>
           <MenuClerk />
           <Menu
@@ -102,9 +101,10 @@ export default function Home() {
               borderTopColor: token.colorPrimary,
               borderTopWidth: 'thin',
               borderTopStyle: 'solid',
-              /*borderBottomColor: token.colorPrimary,
+              borderBottomColor: token.colorPrimary,
               borderBottomWidth: 'thin',
-              borderBottomStyle: 'solid',*/
+              borderBottomStyle: 'solid',
+              marginBottom: '1px',
             }}
             //theme= {isDarkMode ? "dark" : "light"}
             onClick={onClick}
