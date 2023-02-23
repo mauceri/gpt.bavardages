@@ -8,17 +8,10 @@ import {
   PlusOutlined,
 } from '@ant-design/icons';
 import { useUser } from '@clerk/clerk-react';
-import {NouveauBavardageData,NouveauBavardageProps } from './nouveau-bavardage';
+import { NouveauBavardageData, NouveauBavardageProps } from './nouveau-bavardage';
 import NouveauBavardage from './nouveau-bavardage';
-``
 
-interface BavardageType {
-  _id: string;
-  id: string;
-  name: string;
-  date?: string;
-  loading: boolean;
-}
+
 const count = 3;
 const fakeDataUrl = `https://randomuser.me/api/?results=${count}&inc=name,gender,email,nat,picture&noinfo`;
 interface AntdListProps {
@@ -28,45 +21,72 @@ const AntdList: React.FC<AntdListProps> = ((props) => {
   const style: React.CSSProperties = props.style as React.CSSProperties;
   const [initLoading, setInitLoading] = useState(true);
   const [loading, setLoading] = useState(false);
-  const [data, setData] = useState<BavardageType[]>([]);
+
   const { isLoaded, isSignedIn, user } = useUser();
-  const [contextes, setContextes] = useState<BavardageType[]>([]);
+  const [bavardages, setBavardages] = useState<NouveauBavardageData[]>([]);
+  const [bavardage, setBavardage] = useState<NouveauBavardageData>({ name: "", date: "" });
+  const [openBavardage, setOpenBavardage] = useState(false);
+  const [touch, setTouch] = useState(0);
+
 
   useEffect(() => {
+    loadBavardages();
+  }, [user]);
+
+  function loadBavardages() {
     if (user) {
+      console.log("avant liste b");
       fetch("/api/queryMDB?op=list_bavardages&user=" + user?.id)
         .then((res) => res.json())
         .then((res) => {
+          console.log("liste b", res);
           setInitLoading(false);
-          setContextes(res);
-        });
-    }
-  }, [user]);
-
-  function createBavardage(name: string, date: string) {
-    if (user) {
-      fetch("/api/queryMDB?op=create_bavardage&user=" + user?.id + "&name=" + name + "&date=" + date)
-        .then((res) => res.json())
-        .then((res) => {
-          setInitLoading(false);
-          setContextes(res);
+          setBavardages(res);
         });
     }
   }
-  ``
-  const [open, setOpen] = useState(false);
 
-  const showModal = () => {
-    setOpen(true);
-  };
-  const onFinish = (values: any) => {
-    console.log("onFinish ",values); // Affiche les valeurs saisies dans le formulaire
-    setOpen(false);
-  };
-  const onCreate = (values: NouveauBavardageData) => {
+  function updateBavardage(values: NouveauBavardageData) {
+
     console.log('Received values of form: ', values);
-    setOpen(false);
-  };
+    try {
+      removeBavardage(values.name as string, values.date);
+      createBavardage(values.name as string, values.date,values.param);
+    } catch (e) { console.log(e.message) }
+    setInitLoading(false);
+    setOpenBavardage(false);
+    loadBavardages();
+  }
+
+  function createBavardage(name: string, date: string, param?: string) {
+    if (user) {
+      console.log("add ", bavardage)
+      fetch("/api/queryMDB?op=push_bavardage&user=" + user?.id
+        + "&name=" + name
+        + "&date=" + date
+        + "&param" + param
+        )
+        .then((res) => res.json())
+        .then((res) => {
+          console.log(res);
+        })
+        .catch((e) => { throw e });
+    }
+  }
+
+  function removeBavardage(name: string, date: string) {
+    if (user) {
+      console.log("remove ", { name, date })
+      fetch("/api/queryMDB?op=pull_bavardage&user=" + user?.id + "&name=" + name + "&date=" + date)
+        .then((res) => res.json())
+        .then((res) => {
+          console.log(res);
+        })
+        .catch((e) => { throw e });
+    }
+  }
+
+  
 
   return (
     <div
@@ -79,18 +99,20 @@ const AntdList: React.FC<AntdListProps> = ((props) => {
 
       <Button style={{ paddingBottom: '10px', width: '90%', overflow: 'hidden', }}
         onClick={() => {
-          console.log("Aqui");
-          setOpen(true);
+          setOpenBavardage(true);
         }}>
         <span ><PlusOutlined /> Nouveau bavardage</span>
       </Button>
 
       <NouveauBavardage
-        open={open}
-        onCreate={onCreate}
+        open={openBavardage}
+        onCreate={
+          updateBavardage
+        }
         onCancel={() => {
-          setOpen(false);
+          setOpenBavardage(false);
         }}
+        item={bavardage}
       />
 
       <List
@@ -100,8 +122,8 @@ const AntdList: React.FC<AntdListProps> = ((props) => {
         split={true}
         loading={initLoading}
         itemLayout="horizontal"
-        dataSource={contextes}
-        renderItem={(item: BavardageType) => (
+        dataSource={bavardages}
+        renderItem={(item: NouveauBavardageData, index: number) => (
           <List.Item
             actions={[
               <Button key={1} style={{ border: 'none', padding: '0px', margin: '0px', fontSize: '10px' }}>
@@ -123,7 +145,14 @@ const AntdList: React.FC<AntdListProps> = ((props) => {
                       padding: '0px',
                       margin: '0px',
                       textOverflow: 'ellipsis',
-                    }} onClick={() => alert("Coucou")}>
+                    }} onClick={() => {
+                      try {
+                        console.log("Bavardage ", bavardage);
+                        setBavardage({ name: item.name, date: item.date });
+                        console.log("avan modal ", bavardage);
+                        setOpenBavardage(true);
+                      } catch (e) { console.log(e) }
+                    }}>
                     <MessageOutlined />  {item.name} {item.date} darladidadada
                   </Button>
                 }

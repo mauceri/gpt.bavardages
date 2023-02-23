@@ -11,6 +11,7 @@ export default async function handler(
     const from = req.query.from;
     const name = req.query.name;
     const date = req.query.date;
+    const param = req.query.param;
     console.log(req.query.field as string);
     const field:JSON = req.query.field ? JSON.parse(req.query.field as string) : null;
     const { database } = await connectToDatabase('bavardages') as any;
@@ -43,16 +44,24 @@ export default async function handler(
             res.status(200).json(results);
             break;
         }
-        case "get_bavardage": {
-            res.status(200).json("rien");
-            break;
-        }
-        case "create_bavardage": {
+        case "push_bavardage": {
+            console.log("push_bavardage : ",{name:name,date:date})
             database.collection("utilisateurs").updateOne(
                 { id: userId },
-                { $push: {contexts:{name:name,date:date,messages:[]}}},
+                { $push: {contexts:{name:name,date:date, param:param,messages:[]}}},
                 { upsert: true })
                 .then((result: any) => { console.log(result);res.status(200).json(result); })
+                .catch((err: any) => { res.status(500).json(err); })
+            
+            break;
+        }
+        case "pull_bavardage": {
+            console.log("pull_bavardage : ",{name:name,date:date})
+            database.collection("utilisateurs").updateOne(
+                { id: userId },
+                { $pull: {contexts:{name:name,date:date}}},
+                { upsert: true })
+                .then((result: any) => {console.log("Résultat pull ",result);res.status(200).json(result); })
                 .catch((err: any) => { res.status(500).json(err); })
             break;
         }
