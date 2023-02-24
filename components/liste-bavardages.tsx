@@ -35,37 +35,57 @@ const AntdList: React.FC<AntdListProps> = ((props) => {
 
   function loadBavardages() {
     if (user) {
-      console.log("avant liste b");
       fetch("/api/queryMDB?op=list_bavardages&user=" + user?.id)
         .then((res) => res.json())
         .then((res) => {
-          console.log("liste b", res);
           setInitLoading(false);
           setBavardages(res);
+        }).catch((err:any) =>{
+          console.log(err.message)
         });
     }
   }
 
   function updateBavardage(values: NouveauBavardageData) {
 
-    console.log('Received values of form: ', values);
-    try {
-      removeBavardage(values.name as string, values.date);
-      createBavardage(values.name as string, values.date,values.param);
-    } catch (e) { console.log(e.message) }
-    setInitLoading(false);
+     try {
+      updateBavardageFetch(values.name as string, bavardage.name as string, values.date, bavardage.date)
+      //removeBavardageFetch(bavardage.name as string, bavardage.date);
+      //createBavardageFetch(values.name as string, values.date,values.param);
+    } catch (e: any) { console.log(e.message) }
     setOpenBavardage(false);
     loadBavardages();
   }
 
-  function createBavardage(name: string, date: string, param?: string) {
+  function updateBavardageFetch(
+    name: string,
+    oldname: string,
+    date: string,
+    olddate: string,
+    param?: string) {
     if (user) {
-      console.log("add ", bavardage)
+      fetch("/api/queryMDB?op=update_bavardage&user="
+        + user?.id
+        + "&name=" + name
+        + "&oldname=" + oldname
+        + "&date=" + date
+        + "&olddate=" + olddate
+      )
+        .then((res) => res.json())
+        .then((res) => {
+            console.log(res);
+        })
+        .catch((e) => {throw e });
+
+    }
+  }
+  function createBavardageFetch(name: string, date: string, param?: string) {
+    if (user) {
       fetch("/api/queryMDB?op=push_bavardage&user=" + user?.id
         + "&name=" + name
         + "&date=" + date
         + "&param" + param
-        )
+      )
         .then((res) => res.json())
         .then((res) => {
           console.log(res);
@@ -74,7 +94,7 @@ const AntdList: React.FC<AntdListProps> = ((props) => {
     }
   }
 
-  function removeBavardage(name: string, date: string) {
+  function removeBavardageFetch(name: string, date: string) {
     if (user) {
       console.log("remove ", { name, date })
       fetch("/api/queryMDB?op=pull_bavardage&user=" + user?.id + "&name=" + name + "&date=" + date)
@@ -86,7 +106,7 @@ const AntdList: React.FC<AntdListProps> = ((props) => {
     }
   }
 
-  
+
 
   return (
     <div
@@ -147,9 +167,7 @@ const AntdList: React.FC<AntdListProps> = ((props) => {
                       textOverflow: 'ellipsis',
                     }} onClick={() => {
                       try {
-                        console.log("Bavardage ", bavardage);
                         setBavardage({ name: item.name, date: item.date });
-                        console.log("avan modal ", bavardage);
                         setOpenBavardage(true);
                       } catch (e) { console.log(e) }
                     }}>

@@ -40,11 +40,10 @@ const NouveauBavardage: React.FC<NouveauBavardageProps> = ({
     item,
 }) => {
     const [form] = Form.useForm();
-    console.log("avant set values", item);
+ 
     //alert(item.date);
     //item.date = dayjs(item.date,dateFormat)
     form.setFieldsValue(item);
-    console.log("après set values", form.getFieldValue("name"));
 
     return (
         <Modal

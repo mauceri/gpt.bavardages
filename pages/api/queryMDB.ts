@@ -5,15 +5,18 @@ import { NextApiRequest, NextApiResponse } from "next";
 export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse) {
+    //console.log("query :", req.query);
     const op = req.query.op;
     const userId = req.query.user;
     const message = req.query.message;
     const from = req.query.from;
     const name = req.query.name;
     const date = req.query.date;
+    const oldname = req.query.oldname;
+    const olddate = req.query.olddate;
     const param = req.query.param;
     console.log(req.query.field as string);
-    const field:JSON = req.query.field ? JSON.parse(req.query.field as string) : null;
+    const field: JSON = req.query.field ? JSON.parse(req.query.field as string) : null;
     const { database } = await connectToDatabase('bavardages') as any;
 
 
@@ -26,8 +29,8 @@ export default async function handler(
                     .findOne({
                         id: userId
                     });
-                    results = result.contexts;
-                    //res.status(200).json(results);
+                results = result.contexts;
+                //res.status(200).json(results);
                 //.then((result:any) =>{results = result.toArray();})
                 //.catch((error:any)=>{console.log(error.toString());});
             } catch (err) {
@@ -44,40 +47,55 @@ export default async function handler(
             res.status(200).json(results);
             break;
         }
+        case "update_bavardage": {
+            console.log("update_bavardage : ", { name: name, oldname: oldname, date: date, olddate: olddate })
+            database.collection("utilisateurs").updateOne(
+                { id: userId, contexts: { $elemMatch: { name: oldname, date: olddate } } },
+                { $set: { "contexts.$.name": name } }
+            ).then((result: any) => {
+                console.log(result);
+                res.status(200).json(result);
+            }).catch((err: any) => {
+                console.log("Erreur mongodb", err);
+                res.status(500).json(err);
+            });
+
+            break;
+        }
         case "push_bavardage": {
-            console.log("push_bavardage : ",{name:name,date:date})
+            console.log("push_bavardage : ", { name: name, date: date })
             database.collection("utilisateurs").updateOne(
                 { id: userId },
-                { $push: {contexts:{name:name,date:date, param:param,messages:[]}}},
+                { $push: { contexts: { name: name, date: date, param: param, messages: [] } } },
                 { upsert: true })
-                .then((result: any) => { console.log(result);res.status(200).json(result); })
+                .then((result: any) => { console.log(result); res.status(200).json(result); })
                 .catch((err: any) => { res.status(500).json(err); })
-            
+
             break;
         }
         case "pull_bavardage": {
-            console.log("pull_bavardage : ",{name:name,date:date})
+            console.log("pull_bavardage : ", { name: name, date: date })
             database.collection("utilisateurs").updateOne(
                 { id: userId },
-                { $pull: {contexts:{name:name,date:date}}},
+                { $pull: { contexts: { name: name, date: date } } },
                 { upsert: true })
-                .then((result: any) => {console.log("Résultat pull ",result);res.status(200).json(result); })
+                .then((result: any) => { console.log("Résultat pull ", result); res.status(200).json(result); })
                 .catch((err: any) => { res.status(500).json(err); })
             break;
         }
         case "push_message": {
             database.collection("utilisateurs").updateOne(
-                {id:userId, contexts: {$elemMatch: {name:name,date:date}}},
-                { $push: { "contexts.$.messages": {message: message,from:from }}})
-                .then((result: any) => { console.log(result) ;res.status(200).json(result);})
+                { id: userId, contexts: { $elemMatch: { name: name, date: date } } },
+                { $push: { "contexts.$.messages": { message: message, from: from } } })
+                .then((result: any) => { console.log(result); res.status(200).json(result); })
                 .catch((err: any) => { res.status(500).json(err); })
             break;
         }
         case "pull_message": {
             database.collection("utilisateurs").updateOne(
-                {id:userId, contexts: {$elemMatch: {name:name,date:date}}},
-                { $pull: { "contexts.$.messages": {message: message,from:from }}})
-                .then((result: any) => { console.log(result);res.status(200).json(result); })
+                { id: userId, contexts: { $elemMatch: { name: name, date: date } } },
+                { $pull: { "contexts.$.messages": { message: message, from: from } } })
+                .then((result: any) => { console.log(result); res.status(200).json(result); })
                 .catch((err: any) => { res.status(500).json(err); })
 
             break;
