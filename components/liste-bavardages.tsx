@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { Avatar, Button, Divider, List, Modal, Skeleton, Space } from 'antd';
+import { Avatar, Button, Divider, Dropdown, DropdownProps, List, Menu, MenuProps, message, Modal, Popconfirm, Skeleton, Space } from 'antd';
 import {
   EditOutlined,
-  MenuOutlined,
+  SyncOutlined,
   DeleteFilled,
+  DownOutlined,
   MessageOutlined,
   PlusOutlined,
 } from '@ant-design/icons';
 import { useUser } from '@clerk/clerk-react';
 import { NouveauBavardageData, NouveauBavardageProps } from './nouveau-bavardage';
 import NouveauBavardage from './nouveau-bavardage';
-
+import { createRoot } from 'react-dom/client';
 
 const count = 3;
 const fakeDataUrl = `https://randomuser.me/api/?results=${count}&inc=name,gender,email,nat,picture&noinfo`;
@@ -39,8 +40,9 @@ const AntdList: React.FC<AntdListProps> = ((props) => {
         .then((res) => res.json())
         .then((res) => {
           setInitLoading(false);
-          setBavardages(res);
-        }).catch((err:any) =>{
+
+          setBavardages((res as Array<any>).reverse());
+        }).catch((err: any) => {
           console.log(err.message)
         });
     }
@@ -48,8 +50,14 @@ const AntdList: React.FC<AntdListProps> = ((props) => {
 
   function updateBavardage(values: NouveauBavardageData) {
 
-     try {
-      updateBavardageFetch(values.name as string, bavardage.name as string, values.date, bavardage.date)
+    try {
+      console.log("Update bavardages with", values);
+      updateBavardageFetch(
+        values.name as string,
+        bavardage.name as string,
+        values.date,
+        bavardage.date,
+        values.param)
       //removeBavardageFetch(bavardage.name as string, bavardage.date);
       //createBavardageFetch(values.name as string, values.date,values.param);
     } catch (e: any) { console.log(e.message) }
@@ -70,25 +78,26 @@ const AntdList: React.FC<AntdListProps> = ((props) => {
         + "&oldname=" + oldname
         + "&date=" + date
         + "&olddate=" + olddate
+        + "&param=" + param
       )
         .then((res) => res.json())
         .then((res) => {
-            console.log(res);
+          console.log("Update : ", res);
         })
-        .catch((e) => {throw e });
+        .catch((e) => { throw e });
 
     }
   }
   function createBavardageFetch(name: string, date: string, param?: string) {
     if (user) {
-      fetch("/api/queryMDB?op=push_bavardage&user=" + user?.id
+      fetch("/api/queryMDB?op=create_bavardage&user=" + user?.id
         + "&name=" + name
         + "&date=" + date
         + "&param" + param
       )
         .then((res) => res.json())
         .then((res) => {
-          console.log(res);
+          console.log("Create ", res);
         })
         .catch((e) => { throw e });
     }
@@ -97,14 +106,28 @@ const AntdList: React.FC<AntdListProps> = ((props) => {
   function removeBavardageFetch(name: string, date: string) {
     if (user) {
       console.log("remove ", { name, date })
-      fetch("/api/queryMDB?op=pull_bavardage&user=" + user?.id + "&name=" + name + "&date=" + date)
+      fetch("/api/queryMDB?op=remove_bavardage&user=" + user?.id + "&name=" + name + "&date=" + date)
         .then((res) => res.json())
         .then((res) => {
-          console.log(res);
+          console.log("Remove : ", res);
         })
         .catch((e) => { throw e });
     }
   }
+
+  function editBavardage(item: NouveauBavardageData) {
+    try {
+      setBavardage({ name: item.name, date: item.date });
+      setOpenBavardage(true);
+    } catch (e) { console.log(e) }
+  }
+
+  function deleteBavardage(item: NouveauBavardageData) {
+    message.success('Click on Yes');
+    removeBavardageFetch(item.name as string, item.date);
+    loadBavardages();
+  }
+
 
 
 
@@ -119,9 +142,17 @@ const AntdList: React.FC<AntdListProps> = ((props) => {
 
       <Button style={{ paddingBottom: '10px', width: '90%', overflow: 'hidden', }}
         onClick={() => {
-          setOpenBavardage(true);
+          createBavardageFetch("Nouveau bavardage", Date(), "");
+          loadBavardages();
         }}>
         <span ><PlusOutlined /> Nouveau bavardage</span>
+      </Button>
+
+      <Button style={{ paddingBottom: '10px', width: '90%', overflow: 'hidden', borderWidth: '0' }}
+        onClick={() => {
+          loadBavardages();
+        }}>
+        <span ><SyncOutlined /></span>
       </Button>
 
       <NouveauBavardage
@@ -131,6 +162,7 @@ const AntdList: React.FC<AntdListProps> = ((props) => {
         }
         onCancel={() => {
           setOpenBavardage(false);
+          loadBavardages();
         }}
         item={bavardage}
       />
@@ -146,33 +178,30 @@ const AntdList: React.FC<AntdListProps> = ((props) => {
         renderItem={(item: NouveauBavardageData, index: number) => (
           <List.Item
             actions={[
-              <Button key={1} style={{ border: 'none', padding: '0px', margin: '0px', fontSize: '10px' }}>
-                <EditOutlined />
-              </Button>,
-              <Button key={2} style={{ border: 'none', padding: '0px', margin: '0px', color: 'red', fontSize: '10px' }}>
-                <DeleteFilled />
-              </Button>,
-            ]}>
+              <a href="#" onClick={() => { editBavardage(item) }}><EditOutlined /></a>,
+              <a href="#" onClick={() => { deleteBavardage(item) }}><DeleteFilled /></a>,
+            ]}
+          >
             <Skeleton title={false} loading={item.loading} active>
               <List.Item.Meta
                 //avatar={<Button key="edit" icon={<MessageOutlined style={{ fontSize: '10px' }} />} />}
                 description={
+
                   <Button
                     style={{
-                      width: '150%',
+                      width: '140%',
                       whiteSpace: 'nowrap',
                       border: 'none',
                       padding: '0px',
                       margin: '0px',
                       textOverflow: 'ellipsis',
-                    }} onClick={() => {
-                      try {
-                        setBavardage({ name: item.name, date: item.date });
-                        setOpenBavardage(true);
-                      } catch (e) { console.log(e) }
+                    }}
+                    onClick={() => {
+                      message.info("En cours")
                     }}>
-                    <MessageOutlined />  {item.name} {item.date} darladidadada
+                    <MessageOutlined />  {item.name}
                   </Button>
+
                 }
               />
             </Skeleton>
@@ -184,3 +213,4 @@ const AntdList: React.FC<AntdListProps> = ((props) => {
 });
 
 export default AntdList;
+

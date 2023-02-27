@@ -87,7 +87,7 @@ export default function Home() {
       theme={{
         algorithm: (isDarkMode ? darkAlgorithm : defaultAlgorithm),
       }}>
-
+        <div id="root"></div>
       <Layout className="site-layout"  >
         <Sider trigger={null} collapsible collapsed={collapsed} theme="light"
           style={{
