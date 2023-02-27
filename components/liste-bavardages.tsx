@@ -5,13 +5,13 @@ import {
   SyncOutlined,
   DeleteFilled,
   DownOutlined,
+  ExclamationCircleOutlined,
   MessageOutlined,
   PlusOutlined,
 } from '@ant-design/icons';
 import { useUser } from '@clerk/clerk-react';
 import { NouveauBavardageData, NouveauBavardageProps } from './nouveau-bavardage';
 import NouveauBavardage from './nouveau-bavardage';
-import { createRoot } from 'react-dom/client';
 
 const count = 3;
 const fakeDataUrl = `https://randomuser.me/api/?results=${count}&inc=name,gender,email,nat,picture&noinfo`;
@@ -28,6 +28,7 @@ const AntdList: React.FC<AntdListProps> = ((props) => {
   const [bavardage, setBavardage] = useState<NouveauBavardageData>({ name: "", date: "" });
   const [openBavardage, setOpenBavardage] = useState(false);
   const [touch, setTouch] = useState(0);
+  const [modal, contextHolder] = Modal.useModal();
 
 
   useEffect(() => {
@@ -115,22 +116,48 @@ const AntdList: React.FC<AntdListProps> = ((props) => {
     }
   }
 
-  function editBavardage(item: NouveauBavardageData) {
-    try {
-      setBavardage({ name: item.name, date: item.date });
-      setOpenBavardage(true);
-    } catch (e) { console.log(e) }
+  
+
+  interface NouveauBavardageProps {
+      item: NouveauBavardageData;
   }
 
-  function deleteBavardage(item: NouveauBavardageData) {
-    message.success('Click on Yes');
-    removeBavardageFetch(item.name as string, item.date);
-    loadBavardages();
-  }
+  const DeleteBavardageModal: React.FC<{item:NouveauBavardageData}> = ({item}) => {
+    const [open, setOpen] = useState(false);
+    
+    function deleteBavardage() {
+      removeBavardageFetch(item.name as string, item.date);
+      loadBavardages();
+      setOpen(false);
+    }
+    const showModal = () => {
+      setOpen(true);
+    };
+  
+    const hideModal = () => {
+      setOpen(false);
+    };
+  
+    return (
+      <>
+        <Button danger type="text" onClick={showModal} size="small">
+          <DeleteFilled />
+        </Button>
+        <Modal
+          title="Delete bavardage"
+          open={open}
+          onOk={deleteBavardage}
+          onCancel={hideModal}
+          okText="Oui"
+          cancelText="Non"
+        >
+          <p>Voulez-vous vraiment détruire ce bavardage ?</p>
+        </Modal>
+      </>
+    );
+  };
 
-
-
-
+  
   return (
     <div
       id="scrollableDiv"
@@ -178,8 +205,29 @@ const AntdList: React.FC<AntdListProps> = ((props) => {
         renderItem={(item: NouveauBavardageData, index: number) => (
           <List.Item
             actions={[
-              <a href="#" onClick={() => { editBavardage(item) }}><EditOutlined /></a>,
-              <a href="#" onClick={() => { deleteBavardage(item) }}><DeleteFilled /></a>,
+              <Button
+                style={{
+                  border: 'none',
+                  padding: '0px',
+                  margin: '0px',
+                }}
+                onClick={() => { editBavardage(item) }}>
+                <EditOutlined />
+              </Button>,
+              <DeleteBavardageModal item={item}/>,
+              /*<Button danger
+                style={{
+                  border: 'none',
+                  padding: '0px',
+                  margin: '0px',
+                }}
+                onClick={() => {
+                  setBavardage(item);
+                  message.info("Dans delete");
+                  alertDeleteBavardage();
+                }}>
+                <DeleteFilled />
+              </Button>,*/
             ]}
           >
             <Skeleton title={false} loading={item.loading} active>
