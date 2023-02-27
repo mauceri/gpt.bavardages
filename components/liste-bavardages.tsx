@@ -116,16 +116,19 @@ const AntdList: React.FC<AntdListProps> = ((props) => {
     }
   }
 
-  
-
-  interface NouveauBavardageProps {
-      item: NouveauBavardageData;
+  function editBavardage(item: NouveauBavardageData) {
+    try {
+      setBavardage({ name: item.name, date: item.date });
+      setOpenBavardage(true);
+    } catch (e) { console.log(e) }
   }
+
 
   const DeleteBavardageModal: React.FC<{item:NouveauBavardageData}> = ({item}) => {
     const [open, setOpen] = useState(false);
     
     function deleteBavardage() {
+      message.success('Click on Yes');
       removeBavardageFetch(item.name as string, item.date);
       loadBavardages();
       setOpen(false);
@@ -151,13 +154,14 @@ const AntdList: React.FC<AntdListProps> = ((props) => {
           okText="Oui"
           cancelText="Non"
         >
-          <p>Voulez-vous vraiment détruire ce bavardage ?</p>
+          <p>Voulez-vous détruire ce bavardage ?</p>
         </Modal>
       </>
     );
   };
 
-  
+
+
   return (
     <div
       id="scrollableDiv"
