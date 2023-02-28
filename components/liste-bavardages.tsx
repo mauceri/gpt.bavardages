@@ -186,8 +186,8 @@ const AntdList: React.FC<AntdListProps> = ((props) => {
         renderItem={(item: EditBavardageData, index: number) => (
           <List.Item
             actions={[
-              <EditBavardage updateBavardage={updateBavardage} oldBavardage={item} />,
-              <DeleteBavardageModal item={item} />,
+              <EditBavardage key="1" updateBavardage={updateBavardage} oldBavardage={item} />,
+              <DeleteBavardageModal key="2" item={item} />,
             ]}
           >
             <Skeleton title={false} loading={item.loading} active>
