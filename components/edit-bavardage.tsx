@@ -28,7 +28,6 @@ export interface NouveauBavardageProps {
     updateBavardage: (values: EditBavardageData, bavardage: EditBavardageData) => void;
     oldBavardage: EditBavardageData;
 }
-const dateFormat = 'DD/MM/YYYY';
 
 const EditBavardage: React.FC<NouveauBavardageProps> = ({
     updateBavardage,
