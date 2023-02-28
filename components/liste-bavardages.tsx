@@ -10,8 +10,8 @@ import {
   PlusOutlined,
 } from '@ant-design/icons';
 import { useUser } from '@clerk/clerk-react';
-import { NouveauBavardageData, NouveauBavardageProps } from './nouveau-bavardage';
-import NouveauBavardage from './nouveau-bavardage';
+import { EditBavardageData} from './edit-bavardage';
+import EditBavardage from './edit-bavardage';
 
 const count = 3;
 const fakeDataUrl = `https://randomuser.me/api/?results=${count}&inc=name,gender,email,nat,picture&noinfo`;
@@ -24,9 +24,7 @@ const AntdList: React.FC<AntdListProps> = ((props) => {
   const [loading, setLoading] = useState(false);
 
   const { isLoaded, isSignedIn, user } = useUser();
-  const [bavardages, setBavardages] = useState<NouveauBavardageData[]>([]);
-  const [bavardage, setBavardage] = useState<NouveauBavardageData>({ name: "", date: "" });
-  const [openBavardage, setOpenBavardage] = useState(false);
+  const [bavardages, setBavardages] = useState<EditBavardageData[]>([]);
   const [touch, setTouch] = useState(0);
   const [modal, contextHolder] = Modal.useModal();
 
@@ -41,7 +39,6 @@ const AntdList: React.FC<AntdListProps> = ((props) => {
         .then((res) => res.json())
         .then((res) => {
           setInitLoading(false);
-
           setBavardages((res as Array<any>).reverse());
         }).catch((err: any) => {
           console.log(err.message)
@@ -49,20 +46,17 @@ const AntdList: React.FC<AntdListProps> = ((props) => {
     }
   }
 
-  function updateBavardage(values: NouveauBavardageData) {
+  function updateBavardage(newBavardage: EditBavardageData, oldBavardage:EditBavardageData) {
 
     try {
-      console.log("Update bavardages with", values);
+      console.log("Update bavardages with", newBavardage);
       updateBavardageFetch(
-        values.name as string,
-        bavardage.name as string,
-        values.date,
-        bavardage.date,
-        values.param)
-      //removeBavardageFetch(bavardage.name as string, bavardage.date);
-      //createBavardageFetch(values.name as string, values.date,values.param);
+        newBavardage.name as string,
+        oldBavardage.name as string,
+        newBavardage.date,
+        oldBavardage.date,
+        newBavardage.param)
     } catch (e: any) { console.log(e.message) }
-    setOpenBavardage(false);
     loadBavardages();
   }
 
@@ -116,19 +110,13 @@ const AntdList: React.FC<AntdListProps> = ((props) => {
     }
   }
 
-  function editBavardage(item: NouveauBavardageData) {
-    try {
-      setBavardage({ name: item.name, date: item.date });
-      setOpenBavardage(true);
-    } catch (e) { console.log(e) }
-  }
 
 
-  const DeleteBavardageModal: React.FC<{item:NouveauBavardageData}> = ({item}) => {
+  
+  const DeleteBavardageModal: React.FC<{ item: EditBavardageData }> = ({ item }) => {
     const [open, setOpen] = useState(false);
-    
+
     function deleteBavardage() {
-      message.success('Click on Yes');
       removeBavardageFetch(item.name as string, item.date);
       loadBavardages();
       setOpen(false);
@@ -136,25 +124,25 @@ const AntdList: React.FC<AntdListProps> = ((props) => {
     const showModal = () => {
       setOpen(true);
     };
-  
+
     const hideModal = () => {
       setOpen(false);
     };
-  
+
     return (
       <>
         <Button danger type="text" onClick={showModal} size="small">
           <DeleteFilled />
         </Button>
         <Modal
-          title="Delete bavardage"
+          title="Attention vous êtes sur le point de détruire ce bavardage !"
           open={open}
           onOk={deleteBavardage}
           onCancel={hideModal}
           okText="Oui"
           cancelText="Non"
         >
-          <p>Voulez-vous détruire ce bavardage ?</p>
+          <p>Voulez-vous vraiment le détruire ?</p>
         </Modal>
       </>
     );
@@ -186,17 +174,6 @@ const AntdList: React.FC<AntdListProps> = ((props) => {
         <span ><SyncOutlined /></span>
       </Button>
 
-      <NouveauBavardage
-        open={openBavardage}
-        onCreate={
-          updateBavardage
-        }
-        onCancel={() => {
-          setOpenBavardage(false);
-          loadBavardages();
-        }}
-        item={bavardage}
-      />
 
       <List
         className="liste-bavardages"
@@ -206,32 +183,11 @@ const AntdList: React.FC<AntdListProps> = ((props) => {
         loading={initLoading}
         itemLayout="horizontal"
         dataSource={bavardages}
-        renderItem={(item: NouveauBavardageData, index: number) => (
+        renderItem={(item: EditBavardageData, index: number) => (
           <List.Item
             actions={[
-              <Button
-                style={{
-                  border: 'none',
-                  padding: '0px',
-                  margin: '0px',
-                }}
-                onClick={() => { editBavardage(item) }}>
-                <EditOutlined />
-              </Button>,
-              <DeleteBavardageModal item={item}/>,
-              /*<Button danger
-                style={{
-                  border: 'none',
-                  padding: '0px',
-                  margin: '0px',
-                }}
-                onClick={() => {
-                  setBavardage(item);
-                  message.info("Dans delete");
-                  alertDeleteBavardage();
-                }}>
-                <DeleteFilled />
-              </Button>,*/
+              <EditBavardage updateBavardage={updateBavardage} oldBavardage={item} />,
+              <DeleteBavardageModal item={item} />,
             ]}
           >
             <Skeleton title={false} loading={item.loading} active>
