@@ -4,22 +4,17 @@ import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   UploadOutlined,
-  UserOutlined,
   SwitcherOutlined,
-  VideoCameraOutlined,
-  FolderOutlined,
 } from '@ant-design/icons';
-import { Layout, Menu, theme, ConfigProvider, MenuProps, Alert } from 'antd';
+import { Layout, Menu, theme, ConfigProvider, MenuProps, Alert, message } from 'antd';
 import React, { useEffect, useState } from 'react';
 import {
-  SignedIn,
-  SignedOut,
-  UserButton,
   useUser,
-  RedirectToSignIn,
 } from "@clerk/clerk-react";
 import MenuClerk from '@/components/menu-clerk';
-import AntdList from '@/components/liste-bavardages';
+import { ListeBavardagesProps } from '@/components/liste-bavardages';
+import ListeBavardages from '@/components/liste-bavardages';
+import { EditBavardageData } from '@/components/edit-bavardage';
 
 type MenuItem = Required<MenuProps>['items'][number];
 
@@ -57,7 +52,8 @@ export default function Home() {
   const { defaultAlgorithm, darkAlgorithm } = theme;
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [colorBgColor, setColorBgColor] = useState(token.colorBgContainer);
-
+  const [bavardage, setBavardage] =
+    useState<EditBavardageData>({ name: "inconnu", date: Date(), param: "" });
 
   function handleClick() {
     setIsDarkMode((previousValue) => !previousValue);
@@ -87,7 +83,7 @@ export default function Home() {
       theme={{
         algorithm: (isDarkMode ? darkAlgorithm : defaultAlgorithm),
       }}>
-        <div id="root"></div>
+      <div id="root"></div>
       <Layout className="site-layout"  >
         <Sider trigger={null} collapsible collapsed={collapsed} theme="light"
           style={{
@@ -104,7 +100,7 @@ export default function Home() {
               borderBottomColor: token.colorPrimary,
               borderBottomWidth: 'thin',
               borderBottomStyle: 'solid',
-             
+
             }}
             //theme= {isDarkMode ? "dark" : "light"}
             onClick={onClick}
@@ -112,7 +108,13 @@ export default function Home() {
             defaultSelectedKeys={['2']}
             items={items}
           />
-          <AntdList />
+
+          <ListeBavardages
+            notificationListeBavardages=
+            {(bavardage: EditBavardageData,i:number) => {
+              setBavardage(bavardage)
+            }}
+            style={{ color: "blue" }} />
         </Sider>
         <Layout>
           <Header
@@ -141,7 +143,8 @@ export default function Home() {
                 //color: useToken().token.colorPrimaryActive,
                 backgroundColor: (isDarkMode ? "#111a2c" : "#ffffff"),
                 color: (isDarkMode ? "rgba(255, 255, 255, 0.85)" : "#000000")
-              }} />
+              }}
+              bavardage={bavardage} />
           </Content>
         </Layout>
 

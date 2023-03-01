@@ -1,20 +1,18 @@
 import { ForwardedRef, forwardRef, useCallback, useEffect, useRef, useState } from "react";
 import axios from "axios";
 import {
-  SignedIn,
-  SignedOut,
-  UserButton,
   useUser,
-  RedirectToSignIn,
 } from "@clerk/clerk-react";
+import { EditBavardageData } from './edit-bavardage';
+import { message } from "antd";
 
 interface TerminalProps {
   style?: React.CSSProperties;
+  bavardage: EditBavardageData;
 }
-const Terminal = forwardRef<HTMLDivElement, TerminalProps>((props,ref) => {
-    const style = props.style;
+const Terminal = forwardRef<HTMLDivElement, TerminalProps>(({bavardage,style},ref) => {
     const [isLoading, setIsLoading] = useState(false);
-    const [message, setMessage] = useState("");
+    const [echange, setEchange] = useState("");
     const [apiKeyMissing, setApiKeyMissing] = useState(false);
 
     const inputRef = useRef<HTMLInputElement>();
@@ -25,6 +23,8 @@ const Terminal = forwardRef<HTMLDivElement, TerminalProps>((props,ref) => {
      * Focus on the input whenever we render the terminal or click in the terminal
      */
     useEffect(() => {
+      message.info(bavardage.name);
+      console.log("bavardage prop",bavardage);
       inputRef.current?.focus();
     });
 
@@ -32,9 +32,9 @@ const Terminal = forwardRef<HTMLDivElement, TerminalProps>((props,ref) => {
       inputRef.current?.focus();
     };
 
-    const [messages, setMessages] = useState([
+    const [echanges, setEchanges] = useState([
       {
-        message: "Bonjour, Je suis votre assistant virtuel ! Que puis-je faire pour vous ?",
+        echange: "Bonjour, Je suis votre assistant virtuel ! Que puis-je faire pour vous ?",
         from: "ai",
       },
     ]);
@@ -54,14 +54,14 @@ const Terminal = forwardRef<HTMLDivElement, TerminalProps>((props,ref) => {
         .then((res) => {
           if (apiKeyMissing && res.data.message === "Update OK") {
             setApiKeyMissing(false);
-            setMessages((messages) => [
-              ...messages,
-              { from: "ai", message: "La clef a bien été enregistrée" },
+            setEchanges((echanges) => [
+              ...echanges,
+              { from: "ai", echange: "La clef a bien été enregistrée" },
             ]);
           } else {
-            setMessages((messages) => [
-              ...messages,
-              { from: "ai", message: res.data.message },
+            setEchanges((echanges) => [
+              ...echanges,
+              { from: "ai", echange: res.data.message },
             ]);
           }
         })
@@ -90,12 +90,12 @@ const Terminal = forwardRef<HTMLDivElement, TerminalProps>((props,ref) => {
     const submitMessage = (event: any) => {
       event.preventDefault();
       setIsLoading(true);
-      setMessages((messages) => [
-        ...messages,
-        { from: "user", message: message },
+      setEchanges((echanges) => [
+        ...echanges,
+        { from: "user", echange: echange },
       ]);
-      processMessage(message);
-      setMessage("");
+      processMessage(echange);
+      setEchange("");
     };
     /**
      * When user types something, we update the input value
@@ -103,7 +103,7 @@ const Terminal = forwardRef<HTMLDivElement, TerminalProps>((props,ref) => {
     const handleInputChange =
       (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         setInputValue(e.target.value);
-        setMessage(e.target.value)
+        setEchange(e.target.value)
       };
 
     /**
@@ -116,7 +116,7 @@ const Terminal = forwardRef<HTMLDivElement, TerminalProps>((props,ref) => {
           e.preventDefault();
           setIsLoading(true);
           submitMessage(e);
-          setMessage("");
+          setEchange("");
           //setInputValue('');
           (document.getElementById("input") as HTMLTextAreaElement).value = "";
         }
@@ -124,14 +124,14 @@ const Terminal = forwardRef<HTMLDivElement, TerminalProps>((props,ref) => {
       
     return (
       <div className="terminal" onDoubleClick={focusInput} style = {style} >
-        {messages.map((message, index) => {
-          return message.from === "ai" ? (
-            <div className="terminal__line" id="ai" key={`terminal-line-${index}-${message}`}>
-              <span style={{ color: 'blue' }}><strong>IA: </strong></span> {message.message}
+        {echanges.map((echange, index) => {
+          return echange.from === "ai" ? (
+            <div className="terminal__line" id="ai" key={`terminal-line-${index}-${echange}`}>
+              <span style={{ color: 'blue' }}><strong>IA: </strong></span> {echange.echange}
             </div>
           ) : (
             <div key={index} id="user" className="terminal__line">
-              <span style={{ color: 'blue' }}><strong>{user ? user.firstName + ":" : "Humain:"} </strong></span> {message.message}
+              <span style={{ color: 'blue' }}><strong>{user ? user.firstName + ":" : "Humain:"} </strong></span> {echange.echange}
             </div>
           );
         })}

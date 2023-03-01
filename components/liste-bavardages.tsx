@@ -10,23 +10,22 @@ import {
   PlusOutlined,
 } from '@ant-design/icons';
 import { useUser } from '@clerk/clerk-react';
-import { EditBavardageData} from './edit-bavardage';
+import { EditBavardageData } from './edit-bavardage';
 import EditBavardage from './edit-bavardage';
 
 const count = 3;
 const fakeDataUrl = `https://randomuser.me/api/?results=${count}&inc=name,gender,email,nat,picture&noinfo`;
-interface AntdListProps {
+export interface ListeBavardagesProps {
+  notificationListeBavardages: ((EditBavardageData:EditBavardageData,index?:any) => void)
   style?: React.CSSProperties;
 }
-const AntdList: React.FC<AntdListProps> = ((props) => {
-  const style: React.CSSProperties = props.style as React.CSSProperties;
+const ListeBavardages: React.FC<ListeBavardagesProps> = (({ notificationListeBavardages, style }) => {
+
   const [initLoading, setInitLoading] = useState(true);
   const [loading, setLoading] = useState(false);
 
-  const { isLoaded, isSignedIn, user } = useUser();
+  const { user } = useUser();
   const [bavardages, setBavardages] = useState<EditBavardageData[]>([]);
-  const [touch, setTouch] = useState(0);
-  const [modal, contextHolder] = Modal.useModal();
 
 
   useEffect(() => {
@@ -46,7 +45,7 @@ const AntdList: React.FC<AntdListProps> = ((props) => {
     }
   }
 
-  function updateBavardage(newBavardage: EditBavardageData, oldBavardage:EditBavardageData) {
+  function updateBavardage(newBavardage: EditBavardageData, oldBavardage: EditBavardageData) {
 
     try {
       console.log("Update bavardages with", newBavardage);
@@ -112,7 +111,7 @@ const AntdList: React.FC<AntdListProps> = ((props) => {
 
 
 
-  
+
   const DeleteBavardageModal: React.FC<{ item: EditBavardageData }> = ({ item }) => {
     const [open, setOpen] = useState(false);
 
@@ -194,7 +193,6 @@ const AntdList: React.FC<AntdListProps> = ((props) => {
               <List.Item.Meta
                 //avatar={<Button key="edit" icon={<MessageOutlined style={{ fontSize: '10px' }} />} />}
                 description={
-
                   <Button
                     style={{
                       width: '140%',
@@ -205,7 +203,7 @@ const AntdList: React.FC<AntdListProps> = ((props) => {
                       textOverflow: 'ellipsis',
                     }}
                     onClick={() => {
-                      message.info("En cours")
+                      notificationListeBavardages(item,index);
                     }}>
                     <MessageOutlined />  {item.name}
                   </Button>
@@ -220,5 +218,5 @@ const AntdList: React.FC<AntdListProps> = ((props) => {
   );
 });
 
-export default AntdList;
+export default ListeBavardages;
 
