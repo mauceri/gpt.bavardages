@@ -3,6 +3,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { Configuration, OpenAIApi } from "openai";
 import { connectToDatabase } from "../../lib/mongodb";
 
+
 const getOpenAIAPIKey = async (message: string, apiKeyMissing: boolean, user: any) => {
   let res = { "oaik": "", "message": "" };
 
@@ -55,6 +56,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) { 
+  
   if(userId != null && userId != req.body.user.id) {
     console.log("Alerte %s est un espion",req.body.user.id);
     res.status(500).json({ message: "OpenAI API key missing" });
@@ -63,6 +65,7 @@ export default async function handler(
   if (mdbres === null) {
     console.log("mdbres = null");
     mdbres = await getOpenAIAPIKey(req.body.message, req.body.APIKeyMissing, req.body.user);
+    console.log(mdbres.message);
   }
   if (mdbres?.oaik === "") {
     res.status(500).json({ message: "OpenAI API key missing" });

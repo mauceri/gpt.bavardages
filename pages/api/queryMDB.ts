@@ -1,6 +1,7 @@
 //import "server-only";
 import { connectToDatabase } from "../../lib/mongodb";
 import { NextApiRequest, NextApiResponse } from "next";
+import { EditBavardageData } from "@/components/edit-bavardage";
 
 export default async function handler(
     req: NextApiRequest,
@@ -41,44 +42,38 @@ export default async function handler(
                     { id: userId },
                     { $set: { contexts: [] } },
                     { upsert: true })
-                    .then((result: any) => { console.log("Nouvelle liste de bavardages : ",result) })
+                    .then((result: any) => { console.log("Nouvelle liste de bavardages : ", result) })
                     .catch((err: any) => { res.status(500).json(err); })
             }
             res.status(200).json(results);
-            
-            /*let results: any[] = [];
-            database.collection("utilisateurs")
-                .findOne({ id: userId })
-                .then((result: any) => {
-                    console.log("find one : ",results);
-                    results = result.contexts;
-                })
-                .catch((error: any) => {
-                    console.log(error.toString());
-                    res.status(500).json(error);
-                    return;
-                });
 
-
-            if (results.length === 0) {
-                database.collection("utilisateurs").updateOne(
-                    { id: userId },
-                    { $set: { contexts: [] } },
-                    { upsert: true })
-                    .then((result: any) => { console.log(result) })
-                    .catch((err: any) => { res.status(500).json(err); })
-            }
-            res.status(200).json(results);*/
             break;
         }
         case "update_bavardage": {
-            console.log("update_bavardage : ", { name: name, oldname: oldname, date: date, olddate: olddate, param:param })
+            console.log("update_bavardage : ", { name: name, oldname: oldname, date: date, olddate: olddate, param: param })
             await database.collection("utilisateurs").updateOne(
                 { id: userId, contexts: { $elemMatch: { name: oldname, date: olddate } } },
-                { $set: { "contexts.$.name": name, "contexts.$.date": date, "contexts.$.param": param} }
+                { $set: { "contexts.$.name": name, "contexts.$.date": date, "contexts.$.param": param } }
             ).then((result: any) => {
-                console.log("Update : ",result);
+                console.log("Update : ", result);
                 res.status(200).json(result);
+            }).catch((err: any) => {
+                console.log("Erreur mongodb", err);
+                res.status(500).json(err);
+            });
+
+            break;
+        }
+        case "get_bavardage": {
+            console.log("get_bavardage : ", { name: name, date: date })
+            await database.collection("utilisateurs").findOne(
+                { id: userId, contexts: { $elemMatch: { name: name, date: date } } }
+            ).then((result: any) => {
+                const bavardage = result.contexts.find((elem: EditBavardageData) =>
+                    elem.name === name && elem.date == date);
+
+                console.log("Get bavardage : ", bavardage);
+                res.status(200).json(bavardage);
             }).catch((err: any) => {
                 console.log("Erreur mongodb", err);
                 res.status(500).json(err);
@@ -92,7 +87,7 @@ export default async function handler(
                 { id: userId },
                 { $push: { contexts: { name: name, date: date, param: param, messages: [] } } },
                 { upsert: true })
-                .then((result: any) => { console.log("Create : ",result); res.status(200).json(result); })
+                .then((result: any) => { console.log("Create : ", result); res.status(200).json(result); })
                 .catch((err: any) => { res.status(500).json(err); })
 
             break;
@@ -111,7 +106,7 @@ export default async function handler(
             await database.collection("utilisateurs").updateOne(
                 { id: userId, contexts: { $elemMatch: { name: name, date: date } } },
                 { $push: { "contexts.$.messages": { message: message, from: from } } })
-                .then((result: any) => { console.log("push : ",result); res.status(200).json(result); })
+                .then((result: any) => { console.log("push : ", result); res.status(200).json(result); })
                 .catch((err: any) => { res.status(500).json(err); })
             break;
         }
@@ -119,7 +114,7 @@ export default async function handler(
             await database.collection("utilisateurs").updateOne(
                 { id: userId, contexts: { $elemMatch: { name: name, date: date } } },
                 { $pull: { "contexts.$.messages": { message: message, from: from } } })
-                .then((result: any) => { console.log("pull : ",result); res.status(200).json(result); })
+                .then((result: any) => { console.log("pull : ", result); res.status(200).json(result); })
                 .catch((err: any) => { res.status(500).json(err); })
 
             break;

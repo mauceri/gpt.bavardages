@@ -22,8 +22,6 @@ export interface ListeBavardagesProps {
 const ListeBavardages: React.FC<ListeBavardagesProps> = (({ notificationListeBavardages, style }) => {
 
   const [initLoading, setInitLoading] = useState(true);
-  const [loading, setLoading] = useState(false);
-
   const { user } = useUser();
   const [bavardages, setBavardages] = useState<EditBavardageData[]>([]);
 
