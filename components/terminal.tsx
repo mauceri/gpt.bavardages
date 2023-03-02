@@ -12,7 +12,7 @@ interface TerminalProps {
 }
 const Terminal = forwardRef<HTMLDivElement, TerminalProps>(({ bavardage, style }, ref) => {
   const [isLoading, setIsLoading] = useState(false);
-  const [echange, setEchange] = useState("");
+  const [replique, setReplique] = useState("");
   const [apiKeyMissing, setApiKeyMissing] = useState(false);
 
   const inputRef = useRef<HTMLInputElement>();
@@ -27,19 +27,17 @@ const Terminal = forwardRef<HTMLDivElement, TerminalProps>(({ bavardage, style }
   });
 
   useEffect(() => {
-    message.info(bavardage.name);
     if (user) {
-      fetch("/api/queryMDB?op=get_bavardage&user=" + user?.id+
-      "&name="+bavardage.name+
-      "&date="+bavardage.date)
+      fetch("/api/queryMDB?op=get_bavardage&user=" + user?.id +
+        "&name=" + bavardage.name +
+        "&date=" + bavardage.date)
         .then((res) => res.json())
         .then((res) => {
-          console.log("Retour queryMDB ",res);
-          message.info(res.name+" "+res.date+" récupéré");
+          message.info(res.name + " " + res.date + " récupéré");
+          setRepliques(res.repliques);
         }).catch((err: any) => {
           console.log(err.message)
         });
-
     }
   }, [bavardage])
 
@@ -47,36 +45,47 @@ const Terminal = forwardRef<HTMLDivElement, TerminalProps>(({ bavardage, style }
     inputRef.current?.focus();
   };
 
-  const [echanges, setEchanges] = useState([
+  const [repliques, setRepliques] = useState([
     {
-      echange: "Bonjour, Je suis votre assistant virtuel ! Que puis-je faire pour vous ?",
-      from: "ai",
+      replique: "Bonjour, Je suis votre assistant virtuel ! Que puis-je faire pour vous ?",
+      from: "IA",
     },
   ]);
-  const processMessage = async (message: string) => {
+  const processReplique = async (replique: string) => {
     const qargs =
       JSON.stringify({
         "APIKeyMissing": apiKeyMissing,
         "user": user,
-        "message": message,
+        "replique": replique,
       });
     axios
       .post("/api/prompt?args=" + qargs, {
         "APIKeyMissing": apiKeyMissing,
         "user": user,
-        "message": message,
+        "message": replique,
       })
       .then((res) => {
         if (apiKeyMissing && res.data.message === "Update OK") {
           setApiKeyMissing(false);
-          setEchanges((echanges) => [
-            ...echanges,
-            { from: "ai", echange: "La clef a bien été enregistrée" },
+          setRepliques((repliques) => [
+            ...repliques,
+            { from: "IA", replique: "La clef a bien été enregistrée" },
           ]);
         } else {
-          setEchanges((echanges) => [
-            ...echanges,
-            { from: "ai", echange: res.data.message },
+          fetch("/api/queryMDB?op=push_replique&user=" + user?.id +
+            "&name=" + bavardage.name +
+            "&date=" + bavardage.date +
+            "&from=" + "IA" +
+            "&replique=" + res.data.message)
+            .then((res) => res.json())
+            .then((res) => {
+              //console.log(res);
+            }).catch((err: any) => {
+              console.log(err)
+            });
+          setRepliques((repliques) => [
+            ...repliques,
+            { from:  "IA", replique: res.data.message },
           ]);
         }
       })
@@ -103,15 +112,28 @@ const Terminal = forwardRef<HTMLDivElement, TerminalProps>(({ bavardage, style }
 
 
 
-  const submitMessage = (event: any) => {
+  const submitReplique = (event: any) => {
     event.preventDefault();
     setIsLoading(true);
-    setEchanges((echanges) => [
-      ...echanges,
-      { from: "user", echange: echange },
+    setRepliques((repliques) => [
+      ...repliques,
+      { from: user?.firstName as string, replique: replique },
     ]);
-    processMessage(echange);
-    setEchange("");
+
+    processReplique(replique);
+    fetch("/api/queryMDB?op=push_replique&user=" + user?.id +
+      "&name=" + bavardage.name +
+      "&date=" + bavardage.date +
+      "&from=" + user?.firstName +
+      "&replique=" + replique)
+      .then((res) => res.json())
+      .then((res) => {
+        //message.info("réplique "+replique+" de "+user?.firstName + "sauvée");
+        //console.log(res)
+      }).catch((err: any) => {
+        console.log(err.message)
+      });
+    setReplique("");
   };
   /**
    * When user types something, we update the input value
@@ -119,7 +141,7 @@ const Terminal = forwardRef<HTMLDivElement, TerminalProps>(({ bavardage, style }
   const handleInputChange =
     (e: React.ChangeEvent<HTMLTextAreaElement>) => {
       setInputValue(e.target.value);
-      setEchange(e.target.value)
+      setReplique(e.target.value)
     };
 
   /**
@@ -131,8 +153,8 @@ const Terminal = forwardRef<HTMLDivElement, TerminalProps>(({ bavardage, style }
         let commandToExecute = null;
         e.preventDefault();
         setIsLoading(true);
-        submitMessage(e);
-        setEchange("");
+        submitReplique(e);
+        setReplique("");
         //setInputValue('');
         (document.getElementById("input") as HTMLTextAreaElement).value = "";
       }
@@ -140,14 +162,14 @@ const Terminal = forwardRef<HTMLDivElement, TerminalProps>(({ bavardage, style }
 
   return (
     <div className="terminal" onDoubleClick={focusInput} style={style} >
-      {echanges.map((echange, index) => {
-        return echange.from === "ai" ? (
-          <div className="terminal__line" id="ai" key={`terminal-line-${index}-${echange}`}>
-            <span style={{ color: 'blue' }}><strong>IA: </strong></span> {echange.echange}
+      {repliques.map((replique, index) => {
+        return replique.from === "IA" ? (
+          <div className="terminal__line" id="ai" key={`terminal-line-${index}-${replique}`}>
+            <span style={{ color: 'blue' }}><strong>IA: </strong></span> {replique.replique}
           </div>
         ) : (
           <div key={index} id="user" className="terminal__line">
-            <span style={{ color: 'blue' }}><strong>{user ? user.firstName + ":" : "Humain:"} </strong></span> {echange.echange}
+            <span style={{ color: 'blue' }}><strong>{user ? user.firstName + ":" : "Humain:"} </strong></span> {replique.replique}
           </div>
         );
       })}

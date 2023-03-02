@@ -9,7 +9,7 @@ export default async function handler(
     //console.log("query :", req.query);
     const op = req.query.op;
     const userId = req.query.user;
-    const message = req.query.message;
+    const replique = req.query.replique;
     const from = req.query.from;
     const name = req.query.name;
     const date = req.query.date;
@@ -66,18 +66,26 @@ export default async function handler(
         }
         case "get_bavardage": {
             console.log("get_bavardage : ", { name: name, date: date })
-            await database.collection("utilisateurs").findOne(
-                { id: userId, contexts: { $elemMatch: { name: name, date: date } } }
-            ).then((result: any) => {
-                const bavardage = result.contexts.find((elem: EditBavardageData) =>
-                    elem.name === name && elem.date == date);
-
-                console.log("Get bavardage : ", bavardage);
-                res.status(200).json(bavardage);
-            }).catch((err: any) => {
-                console.log("Erreur mongodb", err);
-                res.status(500).json(err);
-            });
+            await database.collection("utilisateurs").aggregate([
+                // filtrer les éléments en fonction de leur id
+                { $match: { id: userId } },
+                // décomposer le tableau contexts
+                { $unwind: "$contexts" },
+                // filtrer les éléments en fonction de leur name et date
+                { $match: { "contexts.name": name, "contexts.date": date } },
+                // renvoyer l'élément filtré en tant que racine du document
+                { $replaceRoot: { newRoot: "$contexts" } }
+              ]).toArray((err: any, result: any[]) => {
+                if (err) {
+                  console.log("Erreur mongodb", err);
+                  res.status(500).json(err);
+                } else {
+                  const bavardage = result[0];
+                  console.log("Bavardage : ", bavardage);
+                  res.status(200).json(bavardage);
+                }
+              });
+              
 
             break;
         }
@@ -85,7 +93,7 @@ export default async function handler(
             console.log("create_bavardage : ", { name: name, date: date })
             await database.collection("utilisateurs").updateOne(
                 { id: userId },
-                { $push: { contexts: { name: name, date: date, param: param, messages: [] } } },
+                { $push: { contexts: { name: name, date: date, param: param, repliques: [] } } },
                 { upsert: true })
                 .then((result: any) => { console.log("Create : ", result); res.status(200).json(result); })
                 .catch((err: any) => { res.status(500).json(err); })
@@ -102,18 +110,19 @@ export default async function handler(
                 .catch((err: any) => { res.status(500).json(err); })
             break;
         }
-        case "push_message": {
+        case "push_replique": {
+            console.log("push_replique : ", { id: userId,name: name, date: date, replique:replique, from: from})
             await database.collection("utilisateurs").updateOne(
-                { id: userId, contexts: { $elemMatch: { name: name, date: date } } },
-                { $push: { "contexts.$.messages": { message: message, from: from } } })
+                { id: userId,  "contexts.name": name, "contexts.date": date } ,
+                { $push: { "contexts.$.repliques": { replique: replique, from: from } } })
                 .then((result: any) => { console.log("push : ", result); res.status(200).json(result); })
                 .catch((err: any) => { res.status(500).json(err); })
             break;
         }
-        case "pull_message": {
+        case "pull_replique": {
             await database.collection("utilisateurs").updateOne(
                 { id: userId, contexts: { $elemMatch: { name: name, date: date } } },
-                { $pull: { "contexts.$.messages": { message: message, from: from } } })
+                { $pull: { "contexts.$.replique": { replique: replique, from: from } } })
                 .then((result: any) => { console.log("pull : ", result); res.status(200).json(result); })
                 .catch((err: any) => { res.status(500).json(err); })
 
