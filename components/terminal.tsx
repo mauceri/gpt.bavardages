@@ -30,7 +30,7 @@ const Terminal = forwardRef<HTMLDivElement, TerminalProps>(({ bavardage, style }
     let lhistory = "";
     repliques.map((item: Replique, _index: number) => {
       lhistory = lhistory + "\n\n" + item.from + ": " + item.replique;
-      //console.log("Élément historique ", item);
+      console.log("Élément historique ", item);
       return;
     });
     //console.log("Historique local :", lhistory);
@@ -63,7 +63,12 @@ const Terminal = forwardRef<HTMLDivElement, TerminalProps>(({ bavardage, style }
     inputRef.current?.focus();
   };
 
-  const [repliques, setRepliques] = useState([]);
+  const [repliques, setRepliques] = useState([
+    {
+      replique: "Bonjour, Je suis votre assistant virtuel ! Que puis-je faire pour vous ?",
+      from: "IA",
+    },
+  ]);
   const processReplique = async (replique: string) => {
 
     axios
@@ -72,8 +77,7 @@ const Terminal = forwardRef<HTMLDivElement, TerminalProps>(({ bavardage, style }
         "user": user,
         "prompt": bavardage.param + "\n" +
           getHistory() + "\n" +
-          user?.firstName + ": " + 
-          replique,
+          user?.firstName + ": " + replique,
       })
       .then((res) => {
         if (apiKeyMissing && res.data.message === "Update OK") {
