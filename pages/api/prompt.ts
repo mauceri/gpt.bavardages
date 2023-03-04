@@ -88,11 +88,10 @@ export default async function handler(
     completion = await openai.createCompletion({
       model: "text-davinci-003",
       prompt:
-        //"Voici une conversation avec un assistant basé sur une IA. Cet assistant est utile, creatif, malin, et très amical.\n\nHumain: Bonjour, comment allez-vous ?\nIA: Je suis une IA créée par OpenAI. Comment puis-je vous aider ?\nHumain: " +
         req.body.prompt +
         "\nIA: ",
       temperature: 0.7,
-      max_tokens: 400,
+      max_tokens: 1000,
       top_p: 1,
       frequency_penalty: 0,
       presence_penalty: 0.6,

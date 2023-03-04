@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Button, List,  message, Modal, Skeleton } from 'antd';
 import {
   EditOutlined,
@@ -24,12 +24,23 @@ const ListeBavardages: React.FC<ListeBavardagesProps> = (({ notificationListeBav
   const [initLoading, setInitLoading] = useState(true);
   const { user } = useUser();
   const [bavardages, setBavardages] = useState<EditBavardageData[]>([]);
-
+  const isMounted = useRef(false);
 
   useEffect(() => {
     loadBavardages();
+    if (!isMounted.current) {
+      message.info("Démarrage");
+      isMounted.current = true;
+    }
   }, [user]);
-
+  
+  useEffect(() => {
+    if (bavardages.length > 0) {
+      notificationListeBavardages(bavardages[0]);
+      console.log("*********************"+bavardages[0]);
+    }
+  }, [bavardages]);
+  
   function loadBavardages() {
     if (user) {
       fetch("/api/queryMDB?op=list_bavardages&user=" + user?.id)
@@ -176,7 +187,6 @@ const ListeBavardages: React.FC<ListeBavardagesProps> = (({ notificationListeBav
       <List
         className="liste-bavardages"
         //header={<><div style={{ fontSize: "16px", color: "blue", width: '100%', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}><MenuOutlined /> Bavardages</div></>}
-
         split={true}
         loading={initLoading}
         itemLayout="horizontal"
