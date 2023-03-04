@@ -63,12 +63,7 @@ const Terminal = forwardRef<HTMLDivElement, TerminalProps>(({ bavardage, style }
     inputRef.current?.focus();
   };
 
-  const [repliques, setRepliques] = useState([
-    {
-      replique: "Bonjour, Je suis votre assistant virtuel ! Que puis-je faire pour vous ?",
-      from: "IA",
-    },
-  ]);
+  const [repliques, setRepliques] = useState([]);
   const processReplique = async (replique: string) => {
 
     axios

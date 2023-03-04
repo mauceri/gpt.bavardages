@@ -37,7 +37,6 @@ const ListeBavardages: React.FC<ListeBavardagesProps> = (({ notificationListeBav
   useEffect(() => {
     if (bavardages.length > 0) {
       notificationListeBavardages(bavardages[0]);
-      console.log("*********************"+bavardages[0]);
     }
   }, [bavardages]);
   
@@ -103,6 +102,18 @@ const ListeBavardages: React.FC<ListeBavardagesProps> = (({ notificationListeBav
           console.log("Create ", res);
         })
         .catch((e) => { throw e });
+
+        fetch("/api/queryMDB?op=push_replique&user=" + user?.id +
+            "&name=" + name +
+            "&date=" + date +
+            "&from=" + "IA" +
+            "&replique=Bonjour, Je suis votre assistant virtuel ! Que puis-je faire pour vous ?")
+            .then((res) => res.json())
+            .then((res) => {
+              //console.log(res);
+            }).catch((err: any) => {
+              throw err 
+            });
     }
   }
 
