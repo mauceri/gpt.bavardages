@@ -81,7 +81,7 @@ export default async function handler(
                   res.status(500).json(err);
                 } else {
                   const bavardage = result[0];
-                  console.log("Bavardage : ", bavardage);
+                  //console.log("Bavardage : ", bavardage);
                   res.status(200).json(bavardage);
                 }
               });
@@ -111,11 +111,11 @@ export default async function handler(
             break;
         }
         case "push_replique": {
-            console.log("push_replique : ", { id: userId,name: name, date: date, replique:replique, from: from})
+            //console.log("push_replique : ", { id: userId,name: name, date: date, replique:replique, from: from})
             await database.collection("utilisateurs").updateOne(
                 { id: userId,  "contexts.name": name, "contexts.date": date } ,
                 { $push: { "contexts.$.repliques": { replique: replique, from: from } } })
-                .then((result: any) => { console.log("push : ", result); res.status(200).json(result); })
+                .then((result: any) => { /*console.log("push : ", result);*/ res.status(200).json(result); })
                 .catch((err: any) => { res.status(500).json(err); })
             break;
         }

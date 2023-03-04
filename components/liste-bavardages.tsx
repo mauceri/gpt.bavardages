@@ -171,6 +171,7 @@ const ListeBavardages: React.FC<ListeBavardagesProps> = (({ notificationListeBav
         <span ><SyncOutlined /></span>
       </Button>
 
+      
 
       <List
         className="liste-bavardages"

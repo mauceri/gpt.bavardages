@@ -56,7 +56,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) { 
-  
+ 
   if(userId != null && userId != req.body.user.id) {
     console.log("Alerte %s est un espion",req.body.user.id);
     res.status(500).json({ message: "OpenAI API key missing" });
@@ -82,21 +82,21 @@ export default async function handler(
     apiKey: mdbres?.oaik,
   });
   const openai = new OpenAIApi(configuration);
-
+  console.log("prompt = ",req.body.prompt)
   let completion = null;
   try {
     completion = await openai.createCompletion({
       model: "text-davinci-003",
       prompt:
-        "Voici une conversation avec un assistant basé sur une IA. Cet assistant est utile, creatif, malin, et très amical.\n\nHumain: Bonjour, comment allez-vous ?\nIA: Je suis une IA créée par OpenAI. Comment puis-je vous aider ?\nHumain: " +
-        req.body.message +
+        //"Voici une conversation avec un assistant basé sur une IA. Cet assistant est utile, creatif, malin, et très amical.\n\nHumain: Bonjour, comment allez-vous ?\nIA: Je suis une IA créée par OpenAI. Comment puis-je vous aider ?\nHumain: " +
+        req.body.prompt +
         "\nIA: ",
       temperature: 0.7,
-      max_tokens: 200,
+      max_tokens: 400,
       top_p: 1,
       frequency_penalty: 0,
       presence_penalty: 0.6,
-      stop: ["Humain: ", "IA: "],
+      stop: [req.body.user?.firstName, "IA: "],
     });
     if (completion?.statusText === "OK") {
       res.status(200).json({ message: completion.data.choices[0].text });

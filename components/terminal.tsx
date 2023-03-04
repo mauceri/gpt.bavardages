@@ -10,6 +10,12 @@ interface TerminalProps {
   style?: React.CSSProperties;
   bavardage: EditBavardageData;
 }
+interface Replique {
+  replique: string;
+  from: string;
+}
+
+
 const Terminal = forwardRef<HTMLDivElement, TerminalProps>(({ bavardage, style }, ref) => {
   const [isLoading, setIsLoading] = useState(false);
   const [replique, setReplique] = useState("");
@@ -19,6 +25,17 @@ const Terminal = forwardRef<HTMLDivElement, TerminalProps>(({ bavardage, style }
   const [input, setInputValue] = useState<string>('');
   const { isLoaded, isSignedIn, user } = useUser();
 
+
+  function getHistory() {
+    let lhistory = "";
+    repliques.map((item: Replique, _index: number) => {
+      lhistory = lhistory + "\n\n" + item.from + ": " + item.replique;
+      //console.log("Élément historique ", item);
+      return;
+    });
+    //console.log("Historique local :", lhistory);
+    return lhistory;
+  }
   /**
    * Focus on the input whenever we render the terminal or click in the terminal
    */
@@ -27,6 +44,7 @@ const Terminal = forwardRef<HTMLDivElement, TerminalProps>(({ bavardage, style }
   });
 
   useEffect(() => {
+    console.log("Bavardage a changé il vaut maintenant: ", bavardage);
     if (user) {
       fetch("/api/queryMDB?op=get_bavardage&user=" + user?.id +
         "&name=" + bavardage.name +
@@ -52,17 +70,15 @@ const Terminal = forwardRef<HTMLDivElement, TerminalProps>(({ bavardage, style }
     },
   ]);
   const processReplique = async (replique: string) => {
-    const qargs =
-      JSON.stringify({
-        "APIKeyMissing": apiKeyMissing,
-        "user": user,
-        "replique": replique,
-      });
+
     axios
-      .post("/api/prompt?args=" + qargs, {
+      .post("/api/prompt?", {
         "APIKeyMissing": apiKeyMissing,
         "user": user,
-        "message": replique,
+        "prompt": bavardage.param + "\n" +
+          getHistory() + "\n" +
+          user?.firstName + ": " + 
+          replique,
       })
       .then((res) => {
         if (apiKeyMissing && res.data.message === "Update OK") {
@@ -85,8 +101,9 @@ const Terminal = forwardRef<HTMLDivElement, TerminalProps>(({ bavardage, style }
             });
           setRepliques((repliques) => [
             ...repliques,
-            { from:  "IA", replique: res.data.message },
+            { from: "IA", replique: res.data.message },
           ]);
+
         }
       })
       .catch((err) => {
@@ -133,6 +150,7 @@ const Terminal = forwardRef<HTMLDivElement, TerminalProps>(({ bavardage, style }
       }).catch((err: any) => {
         console.log(err.message)
       });
+
     setReplique("");
   };
   /**
