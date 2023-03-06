@@ -6,18 +6,20 @@ import {
     DatePicker,
     Modal,
     Button,
+    Typography,
 } from 'antd';
 import dayjs from 'dayjs';
 //import 'dayjs/locale/fr';
 import locale from 'antd/lib/date-picker/locale/fr_FR';
-import {EditOutlined } from '@ant-design/icons';
+import { EditOutlined } from '@ant-design/icons';
 <DatePicker locale={locale} />;
 const { TextArea } = Input;
 
 export interface EditBavardageData {
     name: string | number | (string | number)[];
     date: string;
-    param?: string;
+    model: string;
+    prompt?: string;
     loading?: boolean;
     value?: any;
     touched?: boolean;
@@ -35,9 +37,9 @@ const EditBavardage: React.FC<NouveauBavardageProps> = ({
 }) => {
     const [form] = Form.useForm();
     const [open, setOpen] = useState(false);
-    const titre = "Édition du bavardage : "+oldBavardage.name
+    const titre = "Édition du bavardage : " + oldBavardage.name
     form.setFieldsValue(oldBavardage);
-    
+
     const showModal = () => {
         setOpen(true);
     };
@@ -46,7 +48,7 @@ const EditBavardage: React.FC<NouveauBavardageProps> = ({
         setOpen(false);
     };
 
-    
+
     return (
         <>
             <Button danger type="text" onClick={showModal} size="small">
@@ -63,9 +65,10 @@ const EditBavardage: React.FC<NouveauBavardageProps> = ({
                     form.validateFields()
                         .then((newBavardage) => {
                             form.resetFields();
-                            updateBavardage(newBavardage,oldBavardage);
+                            //console.log("New bavardage",newBavardage);
+                            updateBavardage(newBavardage, oldBavardage);
                             hideModal();
-                            
+
                         })
                         .catch((info) => {
                             console.log('Validate Failed:', info);
@@ -82,10 +85,16 @@ const EditBavardage: React.FC<NouveauBavardageProps> = ({
                     <Form.Item name="name" label="Nom">
                         <Input />
                     </Form.Item>
+
                     <Form.Item name="date" label="Date">
+                        <Typography.Text className="ant-form-text" type="secondary">
+                            {form.getFieldValue("date")}
+                        </Typography.Text>
+                    </Form.Item>
+                    <Form.Item name="model" label="Modèle">
                         <Input />
                     </Form.Item>
-                    <Form.Item name="param" label="Paramètres">
+                    <Form.Item name="prompt" label="Prompt">
                         <TextArea rows={4} />
                     </Form.Item>
                 </Form>

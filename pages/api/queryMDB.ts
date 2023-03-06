@@ -15,7 +15,8 @@ export default async function handler(
     const date = req.query.date;
     const oldname = req.query.oldname;
     const olddate = req.query.olddate;
-    const param = req.query.param;
+    const prompt = req.query.prompt;
+    const model = req.query.model;
     const field: JSON = req.query.field ? JSON.parse(req.query.field as string) : null;
     const { database } = await connectToDatabase('bavardages') as any;
     console.log(op);
@@ -49,11 +50,37 @@ export default async function handler(
 
             break;
         }
+        case "get_api_key": {
+            await database
+                .collection("utilisateurs")
+                .findOne({
+                    id: userId
+                })
+                .then((result: any) => {
+                    res.status(200).json(result.OpenAIAPIKey);
+                    //res.status(200).json(results);
+                    //.then((result:any) =>{results = result.toArray();})
+                    //.catch((error:any)=>{console.log(error.toString());});
+                })
+                .catch((err: any) => {
+                    res.status(500).json(err);
+                });
+        }
         case "update_bavardage": {
-            console.log("update_bavardage : ", { name: name, oldname: oldname, date: date, olddate: olddate, param: param })
+            console.log("update_bavardage : ", 
+            { name: name, 
+                oldname: oldname, 
+                date: date, 
+                olddate: olddate, 
+                prompt: prompt, 
+                model: model })
             await database.collection("utilisateurs").updateOne(
                 { id: userId, contexts: { $elemMatch: { name: oldname, date: olddate } } },
-                { $set: { "contexts.$.name": name, "contexts.$.date": date, "contexts.$.param": param } }
+                { $set: { "contexts.$.name": name, 
+                "contexts.$.date": date, 
+                "contexts.$.prompt": prompt,
+                "contexts.$.model": model
+             } }
             ).then((result: any) => {
                 console.log("Update : ", result);
                 res.status(200).json(result);
@@ -75,17 +102,17 @@ export default async function handler(
                 { $match: { "contexts.name": name, "contexts.date": date } },
                 // renvoyer l'élément filtré en tant que racine du document
                 { $replaceRoot: { newRoot: "$contexts" } }
-              ]).toArray((err: any, result: any[]) => {
+            ]).toArray((err: any, result: any[]) => {
                 if (err) {
-                  console.log("Erreur mongodb", err);
-                  res.status(500).json(err);
+                    console.log("Erreur mongodb", err);
+                    res.status(500).json(err);
                 } else {
-                  const bavardage = result[0];
-                  //console.log("Bavardage : ", bavardage);
-                  res.status(200).json(bavardage);
+                    const bavardage = result[0];
+                    //console.log("Bavardage : ", bavardage);
+                    res.status(200).json(bavardage);
                 }
-              });
-              
+            });
+
 
             break;
         }
@@ -93,9 +120,9 @@ export default async function handler(
             console.log("create_bavardage : ", { name: name, date: date })
             await database.collection("utilisateurs").updateOne(
                 { id: userId },
-                { $push: { contexts: { name: name, date: date, param: param, repliques: [] } } },
+                { $push: { contexts: { name: name, date: date, model: model, prompt: prompt, repliques: [] } } },
                 { upsert: true })
-                .then((result: any) => { console.log("Create : ", result); res.status(200).json(result); })
+                .then((result: any) => { res.status(200).json(result); })
                 .catch((err: any) => { res.status(500).json(err); })
 
             break;
@@ -106,14 +133,14 @@ export default async function handler(
                 { id: userId },
                 { $pull: { contexts: { name: name, date: date } } },
                 { upsert: true })
-                .then((result: any) => { console.log("Résultat pull ", result); res.status(200).json(result); })
+                .then((result: any) => { res.status(200).json(result); })
                 .catch((err: any) => { res.status(500).json(err); })
             break;
         }
         case "push_replique": {
             //console.log("push_replique : ", { id: userId,name: name, date: date, replique:replique, from: from})
             await database.collection("utilisateurs").updateOne(
-                { id: userId,  "contexts.name": name, "contexts.date": date } ,
+                { id: userId, "contexts.name": name, "contexts.date": date },
                 { $push: { "contexts.$.repliques": { replique: replique, from: from } } })
                 .then((result: any) => { /*console.log("push : ", result);*/ res.status(200).json(result); })
                 .catch((err: any) => { res.status(500).json(err); })
@@ -123,7 +150,7 @@ export default async function handler(
             await database.collection("utilisateurs").updateOne(
                 { id: userId, contexts: { $elemMatch: { name: name, date: date } } },
                 { $pull: { "contexts.$.replique": { replique: replique, from: from } } })
-                .then((result: any) => { console.log("pull : ", result); res.status(200).json(result); })
+                .then((result: any) => {  res.status(200).json(result); })
                 .catch((err: any) => { res.status(500).json(err); })
 
             break;

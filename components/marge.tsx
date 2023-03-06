@@ -26,7 +26,7 @@ function youClickedMe() {
     width = 25
   }
 
-  console.log("Marge width changed from %s to %s", `${oldWidth}%`, `${width}%`);
+  c//onsole.log("Marge width changed from %s to %s", `${oldWidth}%`, `${width}%`);
   //document.documentElement.style.setProperty('--marge-width', `${width}%`);
 
 }

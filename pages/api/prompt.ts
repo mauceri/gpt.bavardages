@@ -1,56 +1,11 @@
 //import "server-only";
 import { NextApiRequest, NextApiResponse } from "next";
 import { Configuration, OpenAIApi } from "openai";
-import { connectToDatabase } from "../../lib/mongodb";
+import {MDBRes} from "@/lib/OpenAIAPIKey";
+import getOpenAIAPIKey from "@/lib/OpenAIAPIKey";
 
-
-const getOpenAIAPIKey = async (message: string, apiKeyMissing: boolean, user: any) => {
-  let res = { "oaik": "", "message": "" };
-
-  if (apiKeyMissing) {
-    try {
-      const { database } = await connectToDatabase('bavardages') as any;
-      const result = await database
-        .collection("utilisateurs")
-        .updateOne({ "id": user.id }, { $set: { "OpenAIAPIKey": message } }, { upsert: true })
-        ;
-      res.oaik = message;
-      res.message = "Update OK";
-    } catch (e) {
-      res = { "oaik": "", "message": "Update failed" };
-      console.log("Error update ", res);
-    }
-    return res;
-  } else {
-    try {
-      const { database } = await connectToDatabase('bavardages') as any;
-      const result = await database
-        .collection("utilisateurs")
-        .findOne({ 'id': user.id })
-        ;
-      if (result === null) {
-        res.oaik = "";
-        res.message = "User not found";
-      } else if(result.OpenAIAPIKey === undefined){
-        res.message = "OpenAI API key missing";
-        res.oaik = "";
-      }else {
-        res.oaik = result.OpenAIAPIKey;
-        res.message = "OK";
-      }
-      return res;
-    } catch (e) {
-      res.oaik = "";
-      res.message = "User not found";
-      return res;
-    }
-  }
-}
-
-var mdbres:any = null;
+var mdbres:MDBRes|null = null;
 var userId:any = null;
-var keyCache = [{userId:"",key:""}]
-
 
 export default async function handler(
   req: NextApiRequest,
@@ -64,8 +19,8 @@ export default async function handler(
   }
   if (mdbres === null) {
     console.log("mdbres = null");
-    mdbres = await getOpenAIAPIKey(req.body.message, req.body.APIKeyMissing, req.body.user);
-    console.log(mdbres.message);
+    mdbres = await getOpenAIAPIKey(req.body.message, req.body.APIKeyMissing, req.body.user.id);
+    console.log(mdbres?.message);
   }
   if (mdbres?.oaik === "") {
     res.status(500).json({ message: "OpenAI API key missing" });
@@ -77,16 +32,16 @@ export default async function handler(
     return;
   }
   userId = req.body.user?.id;
-  keyCache.push({userId:userId,key:mdbres.apiKey});
   const configuration = new Configuration({
     apiKey: mdbres?.oaik,
   });
   const openai = new OpenAIApi(configuration);
-  console.log("prompt = ",req.body.prompt)
+  console.log("prompt = ",req.body.prompt);
+  console.log("model = ",req.body.model);
   let completion = null;
   try {
     completion = await openai.createCompletion({
-      model: "text-davinci-003",
+      model: req.body.model,
       prompt:
         req.body.prompt +
         "\nIA: ",
@@ -98,15 +53,15 @@ export default async function handler(
       stop: [req.body.user?.firstName, "IA: "],
     });
     if (completion?.statusText === "OK") {
+      for (let i = 0; i < completion.data.choices.length; i++) {
+        console.log(completion.data.choices[i]);
       res.status(200).json({ message: completion.data.choices[0].text });
-      //for (let i = 0; i < completion.data.choices.length; i++) {
-        //console.log(completion.data.choices[i]);
-    //}
+    }
     } else {
       res.status(500).json({ message: "AI error" });
     }
   } catch (err:any) {
-    //console.log(err);
+    console.log("Message d'erreur OpenAI",err.message);
     res.status(401).json(err);
   }
 }

@@ -36,6 +36,7 @@ const ListeBavardages: React.FC<ListeBavardagesProps> = (({ notificationListeBav
   
   useEffect(() => {
     if (bavardages.length > 0) {
+      console.log("Avant notification", bavardages[0])
       notificationListeBavardages(bavardages[0]);
     }
   }, [bavardages]);
@@ -62,25 +63,33 @@ const ListeBavardages: React.FC<ListeBavardagesProps> = (({ notificationListeBav
         oldBavardage.name as string,
         newBavardage.date,
         oldBavardage.date,
-        newBavardage.param)
+        newBavardage.model,
+        newBavardage.prompt)
     } catch (e: any) { console.log(e.message) }
     loadBavardages();
   }
-
+ 
   function updateBavardageFetch(
     name: string,
     oldname: string,
     date: string,
     olddate: string,
-    param?: string) {
+    model: string,
+    prompt?: string,
+    ) {
     if (user) {
+      console.log("Query update bavardages call with", 
+      "prompt=" + prompt,
+      "model=" + model
+    );
       fetch("/api/queryMDB?op=update_bavardage&user="
         + user?.id
         + "&name=" + name
         + "&oldname=" + oldname
         + "&date=" + date
         + "&olddate=" + olddate
-        + "&param=" + param
+        + "&prompt=" + prompt
+        + "&model=" + model
       )
         .then((res) => res.json())
         .then((res) => {
@@ -223,6 +232,7 @@ const ListeBavardages: React.FC<ListeBavardagesProps> = (({ notificationListeBav
                       textOverflow: 'ellipsis',
                     }}
                     onClick={() => {
+                      console.log("Notification liste bavardages",item);
                       notificationListeBavardages(item,index);
                     }}>
                     <MessageOutlined />  {item.name}

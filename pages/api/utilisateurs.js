@@ -9,9 +9,7 @@ export default async function handler(req, res) {
             .toArray();
 
         res.json(results);
-        /*results.map((utilisateur)=>{
-            console.log("nom : %s",utilisateur.name)
-        })*/
+       
         
     } catch (e) {
         console.error(e);

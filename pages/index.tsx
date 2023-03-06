@@ -53,7 +53,7 @@ export default function Home() {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [colorBgColor, setColorBgColor] = useState(token.colorBgContainer);
   const [bavardage, setBavardage] =
-    useState<EditBavardageData>({ name: "inconnu", date: Date(), param: "" });
+    useState<EditBavardageData>({ name: "inconnu", date: Date(), prompt: "", model: "" });
 
   function handleClick() {
     setIsDarkMode((previousValue) => !previousValue);
@@ -111,7 +111,7 @@ export default function Home() {
 
           <ListeBavardages
             notificationListeBavardages=
-            {(bavardage: EditBavardageData,i:number) => {
+            {(bavardage: EditBavardageData, i: number) => {
               setBavardage(bavardage)
             }}
             style={{ color: "blue" }} />

@@ -31,7 +31,7 @@ export default async function handler(req, res) {
             if (result === null) {
                 res.status(500).json({ oaik: "", message: "User not found" });
             } else {
-                res.status(200).json({ oaik: message, message: "OK" });
+                res.status(200).json({ oaik: res.OpenAIAPIKey, message: "OK" });
             }
         } catch (e) {
             res.status(500).json({ oaik: "", message: "User not found" });

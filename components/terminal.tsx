@@ -52,6 +52,7 @@ const Terminal = forwardRef<HTMLDivElement, TerminalProps>(({ bavardage, style }
         .then((res) => res.json())
         .then((res) => {
           message.info(res.name + " " + res.date + " récupéré");
+          console.log("Bavardage from mdb",res);
           setRepliques(res.repliques);
         }).catch((err: any) => {
           console.log(err.message)
@@ -70,15 +71,17 @@ const Terminal = forwardRef<HTMLDivElement, TerminalProps>(({ bavardage, style }
     },
   ]);
   const processReplique = async (replique: string) => {
-
-    axios
-      .post("/api/prompt?", {
+    let param =  {
+        "model":bavardage.model,
         "APIKeyMissing": apiKeyMissing,
         "user": user,
-        "prompt": bavardage.param + "\n" +
+        "prompt": bavardage.prompt + "\n" +
           getHistory() + "\n" +
           user?.firstName + ": " + replique,
-      })
+      }
+   
+    axios
+      .post("/api/prompt?", param)
       .then((res) => {
         if (apiKeyMissing && res.data.message === "Update OK") {
           setApiKeyMissing(false);
