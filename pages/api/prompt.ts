@@ -46,7 +46,7 @@ export default async function handler(
         req.body.prompt +
         "\nIA: ",
       temperature: 0.7,
-      max_tokens: 1000,
+      max_tokens: 2000,
       top_p: 1,
       frequency_penalty: 0,
       presence_penalty: 0.6,

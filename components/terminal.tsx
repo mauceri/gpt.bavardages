@@ -52,7 +52,7 @@ const Terminal = forwardRef<HTMLDivElement, TerminalProps>(({ bavardage, style }
         .then((res) => res.json())
         .then((res) => {
           message.info(res.name + " " + res.date + " récupéré");
-          console.log("Bavardage from mdb",res);
+          console.log("Bavardage from mdb", res);
           setRepliques(res.repliques);
         }).catch((err: any) => {
           console.log(err.message)
@@ -71,15 +71,15 @@ const Terminal = forwardRef<HTMLDivElement, TerminalProps>(({ bavardage, style }
     },
   ]);
   const processReplique = async (replique: string) => {
-    let param =  {
-        "model":bavardage.model,
-        "APIKeyMissing": apiKeyMissing,
-        "user": user,
-        "prompt": bavardage.prompt + "\n" +
-          getHistory() + "\n" +
-          user?.firstName + ": " + replique,
-      }
-   
+    let param = {
+      "model": bavardage.model,
+      "APIKeyMissing": apiKeyMissing,
+      "user": user,
+      "prompt": bavardage.prompt + "\n" +
+        (bavardage.history ? getHistory() + "\n" : "") +
+        user?.firstName + ": " + replique,
+    }
+    console.log("Avant OpenAI: ",param);
     axios
       .post("/api/prompt?", param)
       .then((res) => {

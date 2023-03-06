@@ -64,6 +64,7 @@ const ListeBavardages: React.FC<ListeBavardagesProps> = (({ notificationListeBav
         newBavardage.date,
         oldBavardage.date,
         newBavardage.model,
+        newBavardage.history,
         newBavardage.prompt)
     } catch (e: any) { console.log(e.message) }
     loadBavardages();
@@ -75,12 +76,14 @@ const ListeBavardages: React.FC<ListeBavardagesProps> = (({ notificationListeBav
     date: string,
     olddate: string,
     model: string,
+    history: boolean,
     prompt?: string,
     ) {
     if (user) {
       console.log("Query update bavardages call with", 
       "prompt=" + prompt,
-      "model=" + model
+      "model=" + model,
+      "history=" + history
     );
       fetch("/api/queryMDB?op=update_bavardage&user="
         + user?.id
@@ -90,6 +93,7 @@ const ListeBavardages: React.FC<ListeBavardagesProps> = (({ notificationListeBav
         + "&olddate=" + olddate
         + "&prompt=" + prompt
         + "&model=" + model
+        + "&history=" + history
       )
         .then((res) => res.json())
         .then((res) => {

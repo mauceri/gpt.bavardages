@@ -6,7 +6,7 @@ import { EditBavardageData } from "@/components/edit-bavardage";
 export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse) {
-    //console.log("query :", req.query);
+    console.log("query :", req.query);
     const op = req.query.op;
     const userId = req.query.user;
     const replique = req.query.replique;
@@ -17,6 +17,8 @@ export default async function handler(
     const olddate = req.query.olddate;
     const prompt = req.query.prompt;
     const model = req.query.model;
+    const history = (req.query.history === 'false' ? false : true);
+
     const field: JSON = req.query.field ? JSON.parse(req.query.field as string) : null;
     const { database } = await connectToDatabase('bavardages') as any;
     console.log(op);
@@ -73,13 +75,16 @@ export default async function handler(
                 date: date, 
                 olddate: olddate, 
                 prompt: prompt, 
-                model: model })
+                model: model,
+                history:history
+             })
             await database.collection("utilisateurs").updateOne(
                 { id: userId, contexts: { $elemMatch: { name: oldname, date: olddate } } },
                 { $set: { "contexts.$.name": name, 
                 "contexts.$.date": date, 
                 "contexts.$.prompt": prompt,
-                "contexts.$.model": model
+                "contexts.$.model": model,
+                "contexts.$.history": history
              } }
             ).then((result: any) => {
                 console.log("Update : ", result);

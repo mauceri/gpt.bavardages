@@ -7,6 +7,7 @@ import {
     Modal,
     Button,
     Typography,
+    Switch,
 } from 'antd';
 import dayjs from 'dayjs';
 //import 'dayjs/locale/fr';
@@ -19,6 +20,7 @@ export interface EditBavardageData {
     name: string | number | (string | number)[];
     date: string;
     model: string;
+    history: boolean;
     prompt?: string;
     loading?: boolean;
     value?: any;
@@ -63,9 +65,9 @@ const EditBavardage: React.FC<NouveauBavardageProps> = ({
                 onCancel={hideModal}
                 onOk={() => {
                     form.validateFields()
-                        .then((newBavardage) => {
+                        .then((newBavardage:EditBavardageData) => {
                             form.resetFields();
-                            //console.log("New bavardage",newBavardage);
+                            console.log("New bavardage",newBavardage);
                             updateBavardage(newBavardage, oldBavardage);
                             hideModal();
 
@@ -85,7 +87,6 @@ const EditBavardage: React.FC<NouveauBavardageProps> = ({
                     <Form.Item name="name" label="Nom">
                         <Input />
                     </Form.Item>
-
                     <Form.Item name="date" label="Date">
                         <Typography.Text className="ant-form-text" type="secondary">
                             {form.getFieldValue("date")}
@@ -96,6 +97,9 @@ const EditBavardage: React.FC<NouveauBavardageProps> = ({
                     </Form.Item>
                     <Form.Item name="prompt" label="Prompt">
                         <TextArea rows={4} />
+                    </Form.Item>
+                    <Form.Item name="history" label="History" valuePropName="checked">
+                        <Switch />
                     </Form.Item>
                 </Form>
             </Modal>

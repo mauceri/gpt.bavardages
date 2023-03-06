@@ -53,7 +53,7 @@ export default function Home() {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [colorBgColor, setColorBgColor] = useState(token.colorBgContainer);
   const [bavardage, setBavardage] =
-    useState<EditBavardageData>({ name: "inconnu", date: Date(), prompt: "", model: "" });
+    useState<EditBavardageData>({ name: "inconnu", date: Date(), prompt: "", model: "", history: true });
 
   function handleClick() {
     setIsDarkMode((previousValue) => !previousValue);
