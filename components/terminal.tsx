@@ -30,7 +30,7 @@ const Terminal = forwardRef<HTMLDivElement, TerminalProps>(({ bavardage, style }
     let lhistory = "";
     repliques.map((item: Replique, _index: number) => {
       lhistory = lhistory + "\n\n" + item.from + ": " + item.replique;
-      console.log("Élément historique ", item);
+      //console.log("Élément historique ", item);
       return;
     });
     //console.log("Historique local :", lhistory);
@@ -70,63 +70,124 @@ const Terminal = forwardRef<HTMLDivElement, TerminalProps>(({ bavardage, style }
       from: "IA",
     },
   ]);
+  const lreplique = bavardage.prompt + "\n" +
+  (bavardage.history ? getHistory() + "\n" : "") +
+  user?.firstName + ": " + replique;
   const processReplique = async (replique: string) => {
-    let param = {
-      "model": bavardage.model,
-      "APIKeyMissing": apiKeyMissing,
-      "user": user,
-      "prompt": bavardage.prompt + "\n" +
-        (bavardage.history ? getHistory() + "\n" : "") +
-        user?.firstName + ": " + replique,
-    }
-    console.log("Avant OpenAI: ",param);
-    axios
-      .post("/api/prompt?", param)
-      .then((res) => {
-        if (apiKeyMissing && res.data.message === "Update OK") {
-          setApiKeyMissing(false);
-          setRepliques((repliques) => [
-            ...repliques,
-            { from: "IA", replique: "La clef a bien été enregistrée" },
-          ]);
-        } else {
-          fetch("/api/queryMDB?op=push_replique&user=" + user?.id +
-            "&name=" + bavardage.name +
-            "&date=" + bavardage.date +
-            "&from=" + "IA" +
-            "&replique=" + res.data.message)
-            .then((res) => res.json())
-            .then((res) => {
-              //console.log(res);
-            }).catch((err: any) => {
-              console.log(err)
-            });
-          setRepliques((repliques) => [
-            ...repliques,
-            { from: "IA", replique: res.data.message },
-          ]);
+    if (bavardage.model.startsWith("gpt-3.5")) {
+      let param = {
+        "model": bavardage.model,
+        "APIKeyMissing": apiKeyMissing,
+        "user": user,
+        "prompt": lreplique,
+      }
+      console.log("Avant chatgpt: ", param);
+      axios
+        .post("/api/prompt-chatgpt?", param)
+        .then((res) => {
+          if (apiKeyMissing && res.data.message === "Update OK") {
+            setApiKeyMissing(false);
+            setRepliques((repliques) => [
+              ...repliques,
+              { from: "IA", replique: "La clef a bien été enregistrée" },
+            ]);
+          } else {
+            fetch("/api/queryMDB?op=push_replique&user=" + user?.id +
+              "&name=" + bavardage.name +
+              "&date=" + bavardage.date +
+              "&from=" + "IA" +
+              "&replique=" + res.data.message.message.content)
+              .then((res) => res.json())
+              .then((res) => {
+                //console.log(res);
+              }).catch((err: any) => {
+                console.log(err)
+              });
+              console.log("€€€€€€€€€€€€",res.data.message.message.content);
+            setRepliques((repliques) => [
+              ...repliques,
+              { from: "IA", replique: res.data.message.message.content },
+            ]);
 
-        }
-      })
-      .catch((err) => {
-        console.log("Erreur ", err.response.data.message);
-        console.log("Erreur ", err.response.data.status);
-        if (err.response.data.message === "OpenAI API key missing" || err.response.data.status === 401) {
-          setApiKeyMissing(true);
-        }
-        if (err.response.data.message === "Update failed") {
-          console.log("La mise à jour a échoué");
-        }
-        if (err.response.data.message === "User not found") {
-          console.log("Utilisateur inconnu");
-        }
-        if (err.response.data.statusText === "Unauthorized") {
-          setApiKeyMissing(true);
-        }
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
+          }
+        })
+        .catch((err) => {
+          console.log("Erreur ", err.response.data.message);
+          console.log("Erreur ", err.response.data.status);
+          if (err.response.data.message === "OpenAI API key missing" || err.response.data.status === 401) {
+            setApiKeyMissing(true);
+          }
+          if (err.response.data.message === "Update failed") {
+            console.log("La mise à jour a échoué");
+          }
+          if (err.response.data.message === "User not found") {
+            console.log("Utilisateur inconnu");
+          }
+          if (err.response.data.statusText === "Unauthorized") {
+            setApiKeyMissing(true);
+          }
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
+    } else {
+      let param = {
+        "model": bavardage.model,
+        "APIKeyMissing": apiKeyMissing,
+        "user": user,
+        "prompt": bavardage.prompt + "\n" +
+          (bavardage.history ? getHistory() + "\n" : "") +
+          user?.firstName + ": " + replique,
+      }
+      console.log("Avant gpt3: ", param);
+      axios
+        .post("/api/prompt-gpt3?", param)
+        .then((res) => {
+          if (apiKeyMissing && res.data.message === "Update OK") {
+            setApiKeyMissing(false);
+            setRepliques((repliques) => [
+              ...repliques,
+              { from: "IA", replique: "La clef a bien été enregistrée" },
+            ]);
+          } else {
+            fetch("/api/queryMDB?op=push_replique&user=" + user?.id +
+              "&name=" + bavardage.name +
+              "&date=" + bavardage.date +
+              "&from=" + "IA" +
+              "&replique=" + res.data.message)
+              .then((res) => res.json())
+              .then((res) => {
+                //console.log(res);
+              }).catch((err: any) => {
+                console.log(err)
+              });
+            setRepliques((repliques) => [
+              ...repliques,
+              { from: "IA", replique: res.data.message },
+            ]);
+
+          }
+        })
+        .catch((err) => {
+          console.log("Erreur ", err.response.data.message);
+          console.log("Erreur ", err.response.data.status);
+          if (err.response.data.message === "OpenAI API key missing" || err.response.data.status === 401) {
+            setApiKeyMissing(true);
+          }
+          if (err.response.data.message === "Update failed") {
+            console.log("La mise à jour a échoué");
+          }
+          if (err.response.data.message === "User not found") {
+            console.log("Utilisateur inconnu");
+          }
+          if (err.response.data.statusText === "Unauthorized") {
+            setApiKeyMissing(true);
+          }
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
+    }
   };
 
 
