@@ -8,7 +8,7 @@ export type MDBRes = {
 
   const getOpenAIAPIKey = async (message: string, apiKeyMissing: boolean, user: string) => {
     let res:MDBRes = { "oaik": "", "message": "" };
-    console.log("Dans chatGPT",message,apiKeyMissing,user);
+    //console.log(message,apiKeyMissing,user);
     if (apiKeyMissing) { 
       //User gave a new key in message
       try {

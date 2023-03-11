@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Button, List, message, Modal, Skeleton, Tooltip } from 'antd';
+import { Button, List,  message, Modal, Skeleton } from 'antd';
 import {
   EditOutlined,
   SyncOutlined,
@@ -16,7 +16,7 @@ import EditBavardage from './edit-bavardage';
 const count = 3;
 const fakeDataUrl = `https://randomuser.me/api/?results=${count}&inc=name,gender,email,nat,picture&noinfo`;
 export interface ListeBavardagesProps {
-  notificationListeBavardages: ((EditBavardageData: EditBavardageData, index?: any) => void)
+  notificationListeBavardages: ((EditBavardageData:EditBavardageData,index?:any) => void)
   style?: React.CSSProperties;
 }
 const ListeBavardages: React.FC<ListeBavardagesProps> = (({ notificationListeBavardages, style }) => {
@@ -33,14 +33,14 @@ const ListeBavardages: React.FC<ListeBavardagesProps> = (({ notificationListeBav
       isMounted.current = true;
     }
   }, [user]);
-
+  
   useEffect(() => {
     if (bavardages.length > 0) {
       console.log("Avant notification", bavardages[0])
       notificationListeBavardages(bavardages[0]);
     }
   }, [bavardages]);
-
+  
   function loadBavardages() {
     if (user) {
       fetch("/api/queryMDB?op=list_bavardages&user=" + user?.id)
@@ -69,7 +69,7 @@ const ListeBavardages: React.FC<ListeBavardagesProps> = (({ notificationListeBav
     } catch (e: any) { console.log(e.message) }
     loadBavardages();
   }
-
+ 
   function updateBavardageFetch(
     name: string,
     oldname: string,
@@ -78,13 +78,13 @@ const ListeBavardages: React.FC<ListeBavardagesProps> = (({ notificationListeBav
     model: string,
     history: boolean,
     prompt?: string,
-  ) {
+    ) {
     if (user) {
-      console.log("Query update bavardages call with",
-        "prompt=" + prompt,
-        "model=" + model,
-        "history=" + history
-      );
+      console.log("Query update bavardages call with", 
+      "prompt=" + prompt,
+      "model=" + model,
+      "history=" + history
+    );
       fetch("/api/queryMDB?op=update_bavardage&user="
         + user?.id
         + "&name=" + name
@@ -116,17 +116,17 @@ const ListeBavardages: React.FC<ListeBavardagesProps> = (({ notificationListeBav
         })
         .catch((e) => { throw e });
 
-      fetch("/api/queryMDB?op=push_replique&user=" + user?.id +
-        "&name=" + name +
-        "&date=" + date +
-        "&from=" + "IA" +
-        "&replique=Bonjour, Je suis votre assistant virtuel ! Que puis-je faire pour vous ?")
-        .then((res) => res.json())
-        .then((res) => {
-          //console.log(res);
-        }).catch((err: any) => {
-          throw err
-        });
+        fetch("/api/queryMDB?op=push_replique&user=" + user?.id +
+            "&name=" + name +
+            "&date=" + date +
+            "&from=" + "IA" +
+            "&replique=Bonjour, Je suis votre assistant virtuel ! Que puis-je faire pour vous ?")
+            .then((res) => res.json())
+            .then((res) => {
+              //console.log(res);
+            }).catch((err: any) => {
+              throw err 
+            });
     }
   }
 
@@ -206,7 +206,7 @@ const ListeBavardages: React.FC<ListeBavardagesProps> = (({ notificationListeBav
         <span ><SyncOutlined /></span>
       </Button>
 
-
+      
 
       <List
         className="liste-bavardages"
@@ -226,23 +226,22 @@ const ListeBavardages: React.FC<ListeBavardagesProps> = (({ notificationListeBav
               <List.Item.Meta
                 //avatar={<Button key="edit" icon={<MessageOutlined style={{ fontSize: '10px' }} />} />}
                 description={
-                  <Tooltip placement="leftTop" title={item.name}>
-                    <Button
-                      style={{
-                        width: '140%',
-                        whiteSpace: 'nowrap',
-                        border: 'none',
-                        padding: '0px',
-                        margin: '0px',
-                        textOverflow: 'ellipsis',
-                      }}
-                      onClick={() => {
-                        console.log("Notification liste bavardages", item);
-                        notificationListeBavardages(item, index);
-                      }}>
-                      <MessageOutlined />  {item.name}
-                    </Button>
-                  </Tooltip>
+                  <Button
+                    style={{
+                      width: '140%',
+                      whiteSpace: 'nowrap',
+                      border: 'none',
+                      padding: '0px',
+                      margin: '0px',
+                      textOverflow: 'ellipsis',
+                    }}
+                    onClick={() => {
+                      console.log("Notification liste bavardages",item);
+                      notificationListeBavardages(item,index);
+                    }}>
+                    <MessageOutlined />  {item.name}
+                  </Button>
+
                 }
               />
             </Skeleton>
