@@ -40,7 +40,8 @@ export default async function handler(
     client
       .post("https://api.openai.com/v1/chat/completions", param)
       .then((result) => { 
-        res.status(200).json(result.data.choices[0].message ) })
+        console.log(result.data.choices[0].message);
+        res.status(200).json(result.data.choices[0].message) })
       .catch((err) => { console.log("Erreur ", err.message); res.status(500).json(err.message); })
   } else {
     res.status(400).json("Unknown error");

@@ -29,7 +29,7 @@ const Terminal = forwardRef<HTMLDivElement, TerminalProps>(({ bavardage, style }
 
   function getHistory() {
     let lhistory = "";
-    repliques.map((item: Replique, _index: number) => {
+    repliques.slice(-10).map((item: Replique, _index: number) => {
       lhistory = lhistory + "\n\n" + item.from + ": " + item.replique;
       //console.log("Élément historique ", item);
       return;
@@ -104,7 +104,7 @@ const Terminal = forwardRef<HTMLDivElement, TerminalProps>(({ bavardage, style }
         "&name=" + bavardage.name +
         "&date=" + bavardage.date +
         "&from=" + "IA" +
-        "&replique=" + res.data.content)
+        "&replique=" + res.data.content.replace(/^\n*IA:/,''))
         .then((res) => res.json())
         .then((res) => {
           //console.log(res);
@@ -113,7 +113,7 @@ const Terminal = forwardRef<HTMLDivElement, TerminalProps>(({ bavardage, style }
         });
       setRepliques((repliques) => [
         ...repliques,
-        { from: "IA", replique: res.data.content },
+        { from: "IA", replique: res.data.content.replace(/^\n*IA:/,'') },
       ]);
     }
   }
