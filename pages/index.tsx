@@ -6,7 +6,7 @@ import {
   UploadOutlined,
   SwitcherOutlined,
 } from '@ant-design/icons';
-import { Layout, Menu, theme, ConfigProvider, MenuProps, Alert, message } from 'antd';
+import { Layout, Menu, theme, ConfigProvider, MenuProps, Alert, message, Upload, UploadProps, Space } from 'antd';
 import React, { useEffect, useState } from 'react';
 import {
   useUser,
@@ -37,12 +37,6 @@ function getItem(
   } as MenuItem;
 }
 
-const items: MenuItem[] =
-  [
-    getItem('Bascule du thème', '1', <SwitcherOutlined />),
-    getItem('Chargement...', '3', <UploadOutlined />),
-  ];
-
 
 
 export default function Home() {
@@ -54,8 +48,11 @@ export default function Home() {
   const [colorBgColor, setColorBgColor] = useState(token.colorBgContainer);
   const [bavardage, setBavardage] =
     useState<EditBavardageData>({ name: "inconnu", date: Date(), prompt: "", model: "", history: true });
-
-  function handleClick() {
+  const [fileContent, setFileContent] = useState("");
+  useEffect(() => {
+    message.info(fileContent);
+  }, [fileContent]);
+  function handleClickBasculeTheme() {
     setIsDarkMode((previousValue) => !previousValue);
 
     setColorBgColor((previousValue) => previousValue === token.colorBgContainer
@@ -63,19 +60,72 @@ export default function Home() {
       : token.colorBgContainer);
   }
 
-  const onClick: MenuProps['onClick'] = (e) => {
+  const onClickMenu: MenuProps['onClick'] = (e) => {
 
     switch (e.key) {
       case "1": {
-        handleClick()
+        handleClickBasculeTheme()
         return;
       }
       default: {
-        alert(e.keyPath);
+        console.log(e.keyPath);
       }
 
     }
   };
+  const handleUpload = (file: File) => {
+    const reader = new FileReader();
+
+    reader.onload = (event) => {
+      message.info("Aqui");
+      const result = event.target?.result;
+      if (typeof result === "string") {
+        setFileContent(result);
+      }
+    };
+    reader.readAsText(file);
+  };
+  const propsUpload: UploadProps = {
+    listType: 'text',
+    action: "/api/upload",
+    onChange(info) {
+      const { status } = info.file;
+      if (status !== "uploading") {
+        //console.log(info.file, info.fileList);
+      }
+      if (status === "done") {
+        message.success(`${info.file.name} file uploaded successfully.`);
+      } else if (status === "error") {
+        message.error(`${info.file.name} file upload failed.`);
+      }
+    },
+
+    beforeUpload(file) {
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.readAsText(file);
+        reader.addEventListener(
+          "load",
+          () => {
+            const content = reader.result;
+            setFileContent(content as string);
+          },
+          false
+        );
+      });
+    }
+  }
+  const items: MenuItem[] =
+    [
+      getItem('Bascule du thème', '1', <SwitcherOutlined />),
+      getItem('Chargement...', '3',
+        <div>
+          <Upload {...propsUpload}>
+            <a href="#"><UploadOutlined /></a>
+          </Upload>
+        </div>),
+    ];
+
 
 
   return (
@@ -91,7 +141,13 @@ export default function Home() {
             borderRightWidth: 'thin',
             borderRightStyle: 'solid',
           }}>
-          <MenuClerk />
+          <Space>
+            {React.createElement(collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
+              className: 'trigger',
+              onClick: () => setCollapsed(!collapsed),
+            })}
+            <MenuClerk />
+          </Space>
           <Menu
             style={{
               borderTopColor: token.colorPrimary,
@@ -103,7 +159,7 @@ export default function Home() {
 
             }}
             //theme= {isDarkMode ? "dark" : "light"}
-            onClick={onClick}
+            onClick={onClickMenu}
             mode="inline"
             defaultSelectedKeys={['2']}
             items={items}
@@ -117,24 +173,7 @@ export default function Home() {
             style={{ color: "blue" }} />
         </Sider>
         <Layout>
-          <Header
-            className='header'
-            style={{
-              padding: 0,
-              //backgroundColor: useToken().token.colorBgContainer,
-              backgroundColor: (isDarkMode ? "#111a2c" : "#ffffff"),
-              color: (isDarkMode ? "#ffffff" : "#000000"),
-              //color: useToken().token.colorPrimaryActive,
-              //backgroundColor: 'black',
-              borderBottomColor: token.colorPrimary,
-              borderBottomWidth: 'thin',
-              borderBottomStyle: 'solid'
-            }} >
-            {React.createElement(collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
-              className: 'trigger',
-              onClick: () => setCollapsed(!collapsed),
-            })}
-          </Header>
+
 
           <Content >
             <Terminal
@@ -152,3 +191,23 @@ export default function Home() {
     </ConfigProvider>
   )
 }
+
+/*
+<Header
+            className='header'
+            style={{
+              padding: 0,
+              //backgroundColor: useToken().token.colorBgContainer,
+              backgroundColor: (isDarkMode ? "#111a2c" : "#ffffff"),
+              color: (isDarkMode ? "#ffffff" : "#000000"),
+              //color: useToken().token.colorPrimaryActive,
+              //backgroundColor: 'black',
+              borderBottomColor: token.colorPrimary,
+              borderBottomWidth: 'thin',
+              borderBottomStyle: 'solid'
+            }} >
+            {React.createElement(collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
+              className: 'trigger',
+              onClick: () => setCollapsed(!collapsed),
+            })}
+          </Header>*/

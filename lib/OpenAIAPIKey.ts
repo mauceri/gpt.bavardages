@@ -1,3 +1,4 @@
+import { NextApiResponse } from "next";
 import { connectToDatabase } from "./mongodb";
 
 
@@ -6,6 +7,26 @@ export type MDBRes = {
     message: string;
   }
 
+  export function handleGetOpenAIKR(mdbres:MDBRes,res:NextApiResponse)
+  {
+    if (mdbres?.oaik === "") {
+      res.status(500).json({ message: "OpenAI API key missing" });
+      return false;
+    } else if (mdbres?.message === "Update OK") {
+      res.status(200).json({ message: "Update OK" });
+      return false;
+    }
+    return true;
+  }
+
+  export function handleOpenAIR(completion:any,res:NextApiResponse)
+  {
+    if (completion?.statusText === "OK") {
+      res.status(200).json({ message: completion.data.choices[0].text });
+    } else {
+      res.status(500).json({ message: "AI error" });
+    }
+}
   const getOpenAIAPIKey = async (message: string, apiKeyMissing: boolean, user: string) => {
     let res:MDBRes = { "oaik": "", "message": "" };
     //console.log(message,apiKeyMissing,user);
@@ -21,7 +42,6 @@ export type MDBRes = {
         res.message = "Update OK";
       } catch (e) {
         res = { "oaik": "", "message": "Update failed" };
-        console.log("Error update ", res);
       }
       return res;
     } else {

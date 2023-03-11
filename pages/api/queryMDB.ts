@@ -6,7 +6,7 @@ import { EditBavardageData } from "@/components/edit-bavardage";
 export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse) {
-    console.log("query :", req.query);
+
     const op = req.query.op;
     const userId = req.query.user;
     const replique = req.query.replique;
@@ -21,7 +21,7 @@ export default async function handler(
 
     const field: JSON = req.query.field ? JSON.parse(req.query.field as string) : null;
     const { database } = await connectToDatabase('bavardages') as any;
-    console.log(op);
+    //console.log(op);
 
     switch (op) {
         case "list_bavardages": {
@@ -97,7 +97,7 @@ export default async function handler(
             break;
         }
         case "get_bavardage": {
-            console.log("get_bavardage : ", { name: name, date: date })
+            //console.log("get_bavardage : ", { name: name, date: date })
             await database.collection("utilisateurs").aggregate([
                 // filtrer les éléments en fonction de leur id
                 { $match: { id: userId } },

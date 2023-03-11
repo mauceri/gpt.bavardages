@@ -1,10 +1,11 @@
 import { ForwardedRef, forwardRef, useCallback, useEffect, useRef, useState } from "react";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import {
   useUser,
 } from "@clerk/clerk-react";
 import { EditBavardageData } from './edit-bavardage';
 import { message } from "antd";
+import { NextApiResponse } from "next";
 
 interface TerminalProps {
   style?: React.CSSProperties;
@@ -30,7 +31,7 @@ const Terminal = forwardRef<HTMLDivElement, TerminalProps>(({ bavardage, style }
     let lhistory = "";
     repliques.map((item: Replique, _index: number) => {
       lhistory = lhistory + "\n\n" + item.from + ": " + item.replique;
-      console.log("Élément historique ", item);
+      //console.log("Élément historique ", item);
       return;
     });
     //console.log("Historique local :", lhistory);
@@ -52,8 +53,9 @@ const Terminal = forwardRef<HTMLDivElement, TerminalProps>(({ bavardage, style }
         .then((res) => res.json())
         .then((res) => {
           message.info(res.name + " " + res.date + " récupéré");
-          console.log("Bavardage from mdb", res);
+          //console.log("Bavardage from mdb", res);
           setRepliques(res.repliques);
+          //res.status(200).message("OK");
         }).catch((err: any) => {
           console.log(err.message)
         });
@@ -64,6 +66,74 @@ const Terminal = forwardRef<HTMLDivElement, TerminalProps>(({ bavardage, style }
     inputRef.current?.focus();
   };
 
+  function handleAxiosOpenAIR(res: AxiosResponse) {
+    //console.log("Résultat", res.data)
+    if (apiKeyMissing && res.data.message === "Update OK") {
+      setApiKeyMissing(false);
+      setRepliques((repliques) => [
+        ...repliques,
+        { from: "IA", replique: "La clef a bien été enregistrée" },
+      ]);
+    } else {
+      fetch("/api/queryMDB?op=push_replique&user=" + user?.id +
+        "&name=" + bavardage.name +
+        "&date=" + bavardage.date +
+        "&from=" + "IA" +
+        "&replique=" + res.data.message)
+        .then((res) => res.json())
+        .then((res) => {
+          //console.log(res);
+        }).catch((err: any) => {
+          console.log(err)
+        });
+      setRepliques((repliques) => [
+        ...repliques,
+        { from: "IA", replique: res.data.message },
+      ]);
+    }
+  }  
+  function handleAxiosOpenAIRAxios(res: AxiosResponse) {
+     if (apiKeyMissing && res.data.message === "Update OK") {
+      setApiKeyMissing(false);
+      setRepliques((repliques) => [
+        ...repliques,
+        { from: "IA", replique: "La clef a bien été enregistrée" },
+      ]);
+    } else {
+      fetch("/api/queryMDB?op=push_replique&user=" + user?.id +
+        "&name=" + bavardage.name +
+        "&date=" + bavardage.date +
+        "&from=" + "IA" +
+        "&replique=" + res.data.content)
+        .then((res) => res.json())
+        .then((res) => {
+          //console.log(res);
+        }).catch((err: any) => {
+          console.log(err)
+        });
+      setRepliques((repliques) => [
+        ...repliques,
+        { from: "IA", replique: res.data.content },
+      ]);
+    }
+  }
+
+  function handleAxiosError(err: any) {
+    //console.log("Erreur ", err.response.data.message);
+    //console.log("Erreur ", err.response.data.status);
+    if (err.response.data.message === "OpenAI API key missing" || err.response.data.status === 401) {
+      setApiKeyMissing(true);
+    }
+    if (err.response.data.message === "Update failed") {
+      console.log("La mise à jour a échoué");
+    }
+    if (err.response.data.message === "User not found") {
+      console.log("Utilisateur inconnu");
+    }
+    if (err.response.data.statusText === "Unauthorized") {
+      setApiKeyMissing(true);
+    }
+  }
   const [repliques, setRepliques] = useState([
     {
       replique: "Bonjour, Je suis votre assistant virtuel ! Que puis-je faire pour vous ?",
@@ -71,7 +141,7 @@ const Terminal = forwardRef<HTMLDivElement, TerminalProps>(({ bavardage, style }
     },
   ]);
   const processReplique = async (replique: string) => {
-    let param = {
+    const param = {
       "model": bavardage.model,
       "APIKeyMissing": apiKeyMissing,
       "user": user,
@@ -79,57 +149,28 @@ const Terminal = forwardRef<HTMLDivElement, TerminalProps>(({ bavardage, style }
         (bavardage.history ? getHistory() + "\n" : "") +
         user?.firstName + ": " + replique,
     }
-    console.log("Avant OpenAI: ",param);
-    axios
-      .post("/api/prompt?", param)
-      .then((res) => {
-        if (apiKeyMissing && res.data.message === "Update OK") {
-          setApiKeyMissing(false);
-          setRepliques((repliques) => [
-            ...repliques,
-            { from: "IA", replique: "La clef a bien été enregistrée" },
-          ]);
-        } else {
-          fetch("/api/queryMDB?op=push_replique&user=" + user?.id +
-            "&name=" + bavardage.name +
-            "&date=" + bavardage.date +
-            "&from=" + "IA" +
-            "&replique=" + res.data.message)
-            .then((res) => res.json())
-            .then((res) => {
-              //console.log(res);
-            }).catch((err: any) => {
-              console.log(err)
-            });
-          setRepliques((repliques) => [
-            ...repliques,
-            { from: "IA", replique: res.data.message },
-          ]);
-
-        }
-      })
-      .catch((err) => {
-        console.log("Erreur ", err.response.data.message);
-        console.log("Erreur ", err.response.data.status);
-        if (err.response.data.message === "OpenAI API key missing" || err.response.data.status === 401) {
-          setApiKeyMissing(true);
-        }
-        if (err.response.data.message === "Update failed") {
-          console.log("La mise à jour a échoué");
-        }
-        if (err.response.data.message === "User not found") {
-          console.log("Utilisateur inconnu");
-        }
-        if (err.response.data.statusText === "Unauthorized") {
-          setApiKeyMissing(true);
-        }
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
+    if (bavardage.model.startsWith("gpt-3.5")) {
+      //console.log("Avant OpenAI: ", param);
+      axios
+        .post("/api/prompt-gpt-3.5-turbo?", param)
+        .then((res) => { handleAxiosOpenAIRAxios(res) })
+        .catch((err) => { handleAxiosError(err)})
+        .finally(() => {
+          setIsLoading(false);
+        });
+    } else {
+      //console.log("Avant OpenAI: ", param);
+      axios
+        .post("/api/prompt-gpt-3?", param)
+        .then((res) => {
+          //console.log(res);
+          handleAxiosOpenAIR(res)})
+        .catch((err) => {handleAxiosError(err)})
+        .finally(() => {
+          setIsLoading(false);
+        });
+    }
   };
-
-
 
   const submitReplique = (event: any) => {
     event.preventDefault();
