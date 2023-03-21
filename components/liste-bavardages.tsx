@@ -217,9 +217,10 @@ const ListeBavardages: React.FC<ListeBavardagesProps> = (({ notificationListeBav
         dataSource={bavardages}
         renderItem={(item: EditBavardageData, index: number) => (
           <List.Item
+            className="list-bavardages-item"
             actions={[
               <EditBavardage key="1" updateBavardage={updateBavardage} oldBavardage={item} />,
-              <DeleteBavardageModal key="2" item={item} />,
+              <DeleteBavardageModal key="2" item={item}/>,
             ]}
           >
             <Skeleton title={false} loading={item.loading} active>

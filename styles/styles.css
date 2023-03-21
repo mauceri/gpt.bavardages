@@ -49,13 +49,6 @@
   border-top-color: #1677ff;
 
   overflow-y: auto;
-  /*background-color: #3C3C3C;
-    color: #C4C4C4;*/
-  /*background-color: #e6f4ff;
-  color:#1677ff;
-  background-color:#ffffff;
-  color: #1677ff;*/
-  
   font-size: 14px;
   line-height: 1.42;
   font-family: 'IBM Plex Mono', Consolas, Menlo, Monaco, 'Courier New', Courier,
@@ -129,4 +122,9 @@
 
 .liste-bavardages {
   min-height: 100px;
+}
+
+.list-bavardages-item .ant-list-item-action {
+  display: flex;
+  justify-content: center;
 }
